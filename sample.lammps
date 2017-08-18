@@ -64,7 +64,7 @@ region  sink_l block ${bx1} ${bx2} ${by1} ${by2} ${bz1} $(v_bz1 + v_zL) units bo
 region  cv_l   block ${bx1} ${bx2} ${by1} ${by2} $(v_bz1 + 2*v_zL) $(v_bz1 + 8*v_zL) units box
 region  source block ${bx1} ${bx2} ${by1} ${by2} $(v_bz1 + 9*v_zL) $(v_bz1 + 11*v_zL) units box
 region  cv_r   block ${bx1} ${bx2} ${by1} ${by2} $(v_bz1 + 12*v_zL) $(v_bz1 + 18*v_zL) units box
-region  sink_r block ${bx1} ${bx2} ${by1} ${by2} $(v_bz1 + 19) ${bz2} units box
+region  sink_r block ${bx1} ${bx2} ${by1} ${by2} $(v_bz1 + 19*v_zL) ${bz2} units box
 
 group gcvl dynamic all region cv_l every 1
 group gcvr dynamic all region cv_r every 1
