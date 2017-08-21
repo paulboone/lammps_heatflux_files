@@ -88,7 +88,7 @@ dump dump1 all xyz 1000000 p6-nvt.dump.*.xyz
 fix           NVT_eq all nvt temp ${simTemp} ${simTemp} 50
 run           2000000
 unfix         NVT_eq
-
+undump dump1
 label after_NVT_eq
 #################################################################################################
 ### heat flux computes and outputs
@@ -148,6 +148,7 @@ dump dump2 all xyz 1000000 p6-nve-eq.dump.*.xyz
 fix           NVE_eq all nve
 run           1000000
 unfix         NVE_eq
+undump dump2
 label after_NVE_eq
 
 #################################################################################################
