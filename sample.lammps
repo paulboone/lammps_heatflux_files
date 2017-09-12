@@ -69,7 +69,7 @@ region  sink_r block ${bx1} ${bx2} ${by1} ${by2} $(v_bz1 + 19*v_zL) ${bz2} units
 group gcvl dynamic all region cv_l every 1
 group gcvr dynamic all region cv_r every 1
 
-variable chunk_size equal zL/2
+variable chunk_size equal ${zL}/2
 compute dchunks all chunk/atom bin/1d z lower ${chunk_size}
 fix dchunk_avgs  all ave/chunk 100  100  10000 dchunks density/mass file density100_10K.out
 
