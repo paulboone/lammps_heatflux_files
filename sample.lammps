@@ -82,8 +82,8 @@ if "${restartAtStep} > 0" then "jump SELF after_NVT_eq"
 thermo_style custom step vol temp press density etotal
 thermo         10000
 thermo_modify  flush yes
-restart        1000000 p6-nvt.*.restart
-dump dump1 all xyz 1000000 p6-nvt.dump.*.xyz
+restart        1000000 nvt-eq.*.restart
+dump dump1 all xyz 1000000 nvt-eq.dump.*.xyz
 
 fix           NVT_eq all nvt temp ${simTemp} ${simTemp} 50
 run           2000000
@@ -142,8 +142,8 @@ if "${restartAtStep} > 1" then "jump SELF after_NVE_eq"
 thermo_style custom step temp etotal c_J_cvl_p[3] c_J_cvl_b[3] c_J_cvl_a[3] c_J_cvl_i[3] c_J_cvr_p[3] c_J_cvr_b[3] c_J_cvr_a[3] c_J_cvr_i[3]
 thermo         10000
 thermo_modify  flush yes
-restart        1000000 p6-nve-eq.*.restart
-dump dump2 all xyz 1000000 p6-nve-eq.dump.*.xyz
+restart        1000000 nve-eq.*.restart
+dump dump2 all xyz 1000000 nve-eq.dump.*.xyz
 
 fix           NVE_eq all nve
 run           1000000
@@ -170,6 +170,6 @@ fix heatfluxtest all nve
 thermo_style custom step temp press etotal v_J_cvl v_J_cvr
 thermo         10000
 thermo_modify flush yes
-restart        1000000 p6-nve.*.restart
-dump dump3 all xyz 5000000 p6-nve.dump.*.xyz
-run           20000000
+restart        1000000 nve.*.restart
+dump dump3 all xyz 5000000 nve.dump.*.xyz
+run           40000000
