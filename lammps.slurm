@@ -28,4 +28,4 @@ run_on_exit(){
 }
 trap run_on_exit EXIT
 
-srun --mpi=pmi2 ~/workspace/lammps-hf-h2p/src/lmp_mpi -in $SLURM_JOB_NAME.lammps
+srun --mpi=pmi2 ~/workspace/lammps-hf-h2p/src/lmp_mpi -in propane-hf.lammps
