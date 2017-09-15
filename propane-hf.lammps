@@ -144,7 +144,7 @@ fix  J10all all ave/time 1  10000  10000 &
 
 if "${restartAtStep} > 1" then "jump SELF after_NVE_eq"
 
-thermo_style custom step temp etotal c_J_cvl_p[3] c_J_cvl_b[3] c_J_cvl_a[3] c_J_cvl_i[3] c_J_cvr_p[3] c_J_cvr_b[3] c_J_cvr_a[3] c_J_cvr_i[3]
+thermo_style custom step vol temp press density etotal v_J_cvl v_J_cvr
 thermo         10000
 thermo_modify  flush yes
 restart        1000000 nve-eq.*.restart
@@ -172,7 +172,7 @@ fix sinkr all heat 1 $(-v_e_applied) region sink_r
 
 fix heatfluxtest all nve
 
-thermo_style custom step temp press etotal v_J_cvl v_J_cvr
+thermo_style custom step vol temp press density etotal v_J_cvl v_J_cvr
 thermo         10000
 thermo_modify flush yes
 restart        1000000 nve.*.restart
