@@ -4,18 +4,24 @@
 # - 0: start at beginning
 # - 1: start after NVT equilibration
 # - 2: start after NVE equilibration
+#
+# to quench, use -var quench <quench_temp>
+
 
 variable restart index 0 'nothing'
 variable        restartAtStep equal ${restart}
 next restart
 variable        restartFileName string ${restart}
-
 print "Restart at step: ${restartAtStep} "
 print "Restart filename: ${restartFileName} "
 
 
 variable        initialDataFile string propane447_50atm.data
 variable        simTemp equal 258
+
+variable quench index ${simTemp}
+variable quenchTemp equal ${quench}
+print "Quench Temp: ${quenchTemp}"
 
 units           real
 atom_style      full
@@ -88,6 +94,7 @@ fix  PE1 all ave/time 1  1  1 c_PE_TOT_ANGLE c_PE_TOT_ALL c_KE_TOT file energy1.
 #################################################################################################
 ### NVT equilibration
 if "${restartAtStep} > 0" then "jump SELF after_NVT_eq"
+print "** NVT EQUILIBRATION ** "
 thermo_style custom step vol temp press density etotal
 thermo         10000
 thermo_modify  flush yes
@@ -98,6 +105,23 @@ fix           NVT_eq all nvt temp ${simTemp} ${simTemp} 50
 run           2000000
 unfix         NVT_eq
 undump dump1
+
+
+### OPTIONAL QUENCH STEP
+if "${quenchTemp} == ${simTemp}" then "jump SELF after_NVT_eq"
+print "** NVT QUENCH ** "
+print "Quenching to temp: ${quenchTemp}"
+thermo_style custom step vol temp press density etotal
+thermo         10000
+thermo_modify  flush yes
+restart        100000 nvt-quench.*.restart
+dump dump1 all xyz 100000 nvt-quench.dump.*.xyz
+
+fix           NVT_quench all nvt temp ${quenchTemp} ${quenchTemp} 50
+run           10000
+unfix         NVT_quench
+undump dump1
+
 label after_NVT_eq
 #################################################################################################
 ### heat flux computes and outputs
@@ -147,7 +171,7 @@ fix  J10all all ave/time 1  10000  10000 &
 ### NVE equilibration
 
 if "${restartAtStep} > 1" then "jump SELF after_NVE_eq"
-
+print "** NVE EQUILIBRATION ** "
 thermo_style custom step vol temp press density etotal v_J_cvl v_J_cvr
 thermo         10000
 thermo_modify  flush yes
@@ -163,7 +187,7 @@ label after_NVE_eq
 #################################################################################################
 ### NVE
 
-
+print "** NVE RUN ** "
 variable cvl_xsection equal (v_bx2-v_bx1)*(v_by2-v_by1)
 variable cvl_volume equal v_cvl_xsection*6*v_zL
 
