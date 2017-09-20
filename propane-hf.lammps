@@ -155,7 +155,7 @@ restart        1000000 nve-eq.*.restart
 dump dump2 all xyz 1000000 nve-eq.dump.*.xyz
 
 fix           NVE_eq all nve
-run           1000000
+run           3000000
 unfix         NVE_eq
 undump dump2
 label after_NVE_eq
