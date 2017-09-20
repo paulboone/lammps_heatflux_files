@@ -79,10 +79,11 @@ fix tchunk_avgs  all ave/chunk 10  1000  10000 tchunks temp file temps10_10K.out
 # output for calculating angle importance
 compute PE_TOT_ALL all pe
 compute PE_TOT_ANGLE all pe angle
-fix  PE10 all ave/time 1  10000  10000 c_PE_TOT_ALL c_PE_TOT_ANGLE file pe10K.out
+compute KE_TOT all ke
+fix  PE10 all ave/time 1  10000  10000 c_PE_TOT_ANGLE c_PE_TOT_ALL c_KE_TOT file energy10K.out
 
 # per timestep output for calculating angle importance via fluctuations
-fix  PE1 all ave/time 1  1  1 c_PE_TOT_ALL c_PE_TOT_ANGLE file pe1.out
+fix  PE1 all ave/time 1  1  1 c_PE_TOT_ANGLE c_PE_TOT_ALL c_KE_TOT file energy1.out
 
 #################################################################################################
 ### NVT equilibration
