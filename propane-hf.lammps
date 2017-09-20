@@ -4,9 +4,6 @@
 # - 0: start at beginning
 # - 1: start after NVT equilibration
 # - 2: start after NVE equilibration
-#
-# to quench, use -var quench <quench_temp>
-
 
 variable restart index 0 'nothing'
 variable        restartAtStep equal ${restart}
@@ -19,9 +16,7 @@ print "Restart filename: ${restartFileName} "
 variable        initialDataFile string propane447_50atm.data
 variable        simTemp equal 258
 
-variable quench index ${simTemp}
-variable quenchTemp equal ${quench}
-print "Quench Temp: ${quenchTemp}"
+variable quenchTemp equal ${simTemp} # change if want to quench
 
 units           real
 atom_style      full
