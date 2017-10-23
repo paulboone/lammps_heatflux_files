@@ -109,10 +109,10 @@ print "Quenching to temp: ${quenchTemp}"
 thermo_style custom step vol temp press density etotal
 thermo         10000
 thermo_modify  flush yes
-restart        100000 nvt-quench.*.restart
-dump dump1 all xyz 100000 nvt-quench.dump.*.xyz
+restart        10000 nvt-quench.*.restart
+dump dump1 all xyz 10000 nvt-quench.dump.*.xyz
 
-fix           NVT_quench all nvt temp ${quenchTemp} ${quenchTemp} 50
+fix           NVT_quench all nvt temp ${quenchTemp} ${quenchTemp} 200
 run           10000
 unfix         NVT_quench
 undump dump1
@@ -199,5 +199,5 @@ thermo_style custom step vol temp press density etotal v_J_cvl v_J_cvr
 thermo         10000
 thermo_modify flush yes
 restart        1000000 nve.*.restart
-dump dump3 all xyz 5000000 nve.dump.*.xyz
+dump dump3 all xyz 1000000 nve.dump.*.xyz
 run           40000000
