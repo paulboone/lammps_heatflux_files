@@ -1,9 +1,5 @@
 import numpy as np
 
-# from mof_screen import generate_lammps_data_file
-
-
-
 def generate_lammps_data_file(masses, atoms, bonds, angles, xb, yb, zb):
     atom_lines = []
     bond_lines = []
@@ -11,8 +7,8 @@ def generate_lammps_data_file(masses, atoms, bonds, angles, xb, yb, zb):
     mass_lines = [" ".join([str(i + 1),str(t)]) for i, t in enumerate(masses)]
 
     for i, atom in enumerate(atoms):
-        x, y, z = atom
-        atom_tuple = (i, 1, 1, 0, x, y, z)
+        atom_id, x, y, z = atom
+        atom_tuple = (int(atom_id), 1, 1, 0, x, y, z)
         atom_lines += [" ".join(map(str,atom_tuple))]
 
     for i, bond in enumerate(bonds):
@@ -52,18 +48,42 @@ def generate_lammps_data_file(masses, atoms, bonds, angles, xb, yb, zb):
     return s
 
 
+def coord_to_index(x, y, z, bx, by, bz):
+    return z * bx * by + y * bx + x
 
-def extend(atoms, int_bonds, ext_bonds, box_size, extend):
+def index_to_coord(i, bx, by, bz):
+    z = i // (bx * by)
+    y = (i % (bx * by)) // bx
+    z = (i % (bx * by)) % bx
+    return (x,y,z)
 
-    return atoms, int_bonds
+def extend(atoms, int_bonds, ext_bonds, box_size, extend_dims):
+    all_atoms = []
+    all_bonds = []
+    combinations = []
+    atom_ids = list(np.arange(len(atoms)))
+    for d0 in np.arange(extend_dims[0]):
+        for d1 in np.arange(extend_dims[1]):
+            for d2 in np.arange(extend_dims[2]):
+                combinations += [(d0,d1,d2)]
+
+    for dmult in combinations:
+        atom_id_offset = coord_to_index(*dmult, *extend_dims) * len(atoms)
+        atom_offsets = (atom_id_offset, *(dmult * box_size))
+        print(atom_offsets)
+        all_atoms += (atoms + atom_offsets).tolist()
+        all_bonds += (int_bonds + atom_id_offset).tolist()
+
+
+    return all_atoms, all_bonds
 
 
 
 linker_length = 10 # angstroms
 bl = linker_length / 4
-atoms = [(0,0,0), (bl, 0, 0), (2*bl, 0, 0),
-         (0, bl, 0), (0, 2*bl, 0),
-         (0, 0, bl), (0, 0, 2*bl)]
+atoms = np.array([(0, 0, 0, 0), (1, bl, 0, 0), (2, 2*bl, 0, 0),
+         (3, 0, bl, 0), (4, 0, 2*bl, 0),
+         (5, 0, 0, bl), (6, 0, 0, 2*bl)])
 int_bonds = np.array([(0,1), (1,2), (0,3), (3,4), (0,5), (0,6)])
 
 
@@ -73,8 +93,8 @@ box_bounds = np.array([linker_length, linker_length, linker_length])
 extend_xyz = np.array([2,2,2])
 allatoms, allbonds = extend(atoms, int_bonds, ext_bonds, box_bounds, extend_xyz)
 allbox_bounds = [np.array([0,d]) for d in extend_xyz * box_bounds]
-print(*allbox_bounds)
-# need to automatically generate angles
+
+# TODO: need to automatically generate angles!!
 
 lammps_data_file = generate_lammps_data_file([1], allatoms, allbonds, [], (0,1), (0,1), (0,1))
 print(lammps_data_file)
