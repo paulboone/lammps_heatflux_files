@@ -24,7 +24,7 @@ ulimit -s unlimited
 cd $SLURM_SCRATCH
 
 run_on_exit(){
-    cp -R $SLURM_SCRATCH/* $SLURM_SUBMIT_DIR/output
+    cp -pR $SLURM_SCRATCH/* $SLURM_SUBMIT_DIR/output
 }
 trap run_on_exit EXIT
 
