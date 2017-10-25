@@ -1,5 +1,37 @@
 import numpy as np
 
+def get_angles(bonds):
+    """ Iterate through bonds to get angles.
+    Bonds should contain no duplicates.
+    """
+    angles = []
+    for i1, b1 in enumerate(bonds):
+        for i2, b2 in enumerate(bonds):
+            if i2 > i1:
+                shared_atom = list(set(b1) & set(b2))
+                if len(shared_atom) > 0:
+                    atom1 = [b for b in b1 if b != shared_atom[0]][0]
+                    atom2 = [b for b in b2 if b != shared_atom[0]][0]
+                    other_atoms = sorted([atom1, atom2])
+                    angles.append((other_atoms[0], shared_atom[0], other_atoms[1]))
+    return sorted(angles)
+
+
+def calculate_angle(p1, p2, p3):
+    """ Calculate angle for three given points in space
+      p2 ->  o
+            / \
+    p1 ->  o   o  <- p3
+    """
+    p1 = np.array(p1)
+    p2 = np.array(p2)
+    p3 = np.array(p3)
+
+    v21 = p1 - p2
+    v23 = p3 - p2
+    angle = np.arccos(np.dot(v21, v23) / (np.linalg.norm(v21) * np.linalg.norm(v23)))
+    return np.degrees(angle)
+
 def generate_lammps_data_file(masses, atoms, bonds, angles, xb, yb, zb):
     atom_lines = []
     bond_lines = []
@@ -62,17 +94,32 @@ def extend(atoms, int_bonds, ext_bonds, box_size, extend_dims):
     all_bonds = []
     combinations = []
     atom_ids = list(np.arange(len(atoms)))
-    for d0 in np.arange(extend_dims[0]):
+    for d2 in np.arange(extend_dims[0]):
         for d1 in np.arange(extend_dims[1]):
-            for d2 in np.arange(extend_dims[2]):
+            for d0 in np.arange(extend_dims[2]):
                 combinations += [(d0,d1,d2)]
 
+
     for dmult in combinations:
-        atom_id_offset = coord_to_index(*dmult, *extend_dims) * len(atoms)
+        cx, cy, cz = dmult
+        atom_id_offset = coord_to_index(cx, cy, cz, *extend_dims) * len(atoms)
         atom_offsets = (atom_id_offset, *(dmult * box_size))
-        print(atom_offsets)
+
+        # fill in box with atoms / internal bonds
         all_atoms += (atoms + atom_offsets).tolist()
         all_bonds += (int_bonds + atom_id_offset).tolist()
+
+        # connect in +x, +y, +z directions
+        # note that it is ok to do this without the atoms already existing because we
+        # know what their future coords will be
+        atom_dir_offset = (atom_id_offset, coord_to_index((cx + 1) % extend_dims[0] , cy, cz, *extend_dims) * len(atoms))
+        all_bonds += (ext_bonds[0] + atom_dir_offset).tolist()
+
+        atom_dir_offset = (atom_id_offset, coord_to_index(cx, (cy + 1) % extend_dims[1], cz, *extend_dims) * len(atoms))
+        all_bonds += (ext_bonds[1] + atom_dir_offset).tolist()
+
+        atom_dir_offset = (atom_id_offset, coord_to_index(cx, cy, (cz + 1) % extend_dims[2], *extend_dims) * len(atoms))
+        all_bonds += (ext_bonds[2] + atom_dir_offset).tolist()
 
 
     return all_atoms, all_bonds
@@ -80,21 +127,21 @@ def extend(atoms, int_bonds, ext_bonds, box_size, extend_dims):
 
 
 linker_length = 10 # angstroms
-bl = linker_length / 4
+bl = linker_length / 3
 atoms = np.array([(0, 0, 0, 0), (1, bl, 0, 0), (2, 2*bl, 0, 0),
          (3, 0, bl, 0), (4, 0, 2*bl, 0),
          (5, 0, 0, bl), (6, 0, 0, 2*bl)])
 int_bonds = np.array([(0,1), (1,2), (0,3), (3,4), (0,5), (0,6)])
 
 
-ext_bonds = np.array([((0,2)), ((0,4)), ((0,6))])
+ext_bonds = np.array([[(0,2)], [(0,4)], [(0,6)]])
 
 box_bounds = np.array([linker_length, linker_length, linker_length])
-extend_xyz = np.array([2,2,2])
+extend_xyz = np.array([5,5,5])
 allatoms, allbonds = extend(atoms, int_bonds, ext_bonds, box_bounds, extend_xyz)
 allbox_bounds = [np.array([0,d]) for d in extend_xyz * box_bounds]
 
 # TODO: need to automatically generate angles!!
 
-lammps_data_file = generate_lammps_data_file([1], allatoms, allbonds, [], (0,1), (0,1), (0,1))
+lammps_data_file = generate_lammps_data_file([1], allatoms, allbonds, [], (0,20), (0,20), (0,20))
 print(lammps_data_file)
