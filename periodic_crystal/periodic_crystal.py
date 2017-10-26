@@ -14,7 +14,6 @@ def get_angles(bonds):
                     atom2 = [b for b in b2 if b != shared_atom[0]][0]
                     other_atoms = sorted([atom1, atom2])
                     angles.append((other_atoms[0], shared_atom[0], other_atoms[1]))
-                    # print('bonds', b1, b2, shared_atom, (other_atoms[0], shared_atom[0], other_atoms[1]))
 
     return sorted(angles)
 
@@ -158,19 +157,14 @@ def extend(atoms, int_bonds, ext_bonds, box_size, extend_dims):
         # connect in +x, +y, +z directions
         # note that it is ok to do this without the atoms already existing because we
         # know what their future coords will be
-        print('coord ', dmult)
-        print(coord_to_index((cx + 1) % extend_dims[0], cy, cz, *extend_dims))
-        # coord_to_index(coord_plus_neighbors(dmult, *extend_dims)
+
         atom_dir_offset = (atom_id_offset, coord_to_index((cx + 1) % extend_dims[0], cy, cz, *extend_dims) * len(atoms))
-        print('atom_dir_offset x: ', atom_dir_offset)
         all_bonds += (ext_bonds[0] + atom_dir_offset).tolist()
 
         atom_dir_offset = (atom_id_offset, coord_to_index(cx, (cy + 1) % extend_dims[1], cz, *extend_dims) * len(atoms))
-        print('atom_dir_offset y: ', atom_dir_offset)
         all_bonds += (ext_bonds[1] + atom_dir_offset).tolist()
 
         atom_dir_offset = (atom_id_offset, coord_to_index(cx, cy, (cz + 1) % extend_dims[2], *extend_dims) * len(atoms))
-        print('atom_dir_offset z: ', atom_dir_offset)
         all_bonds += (ext_bonds[2] + atom_dir_offset).tolist()
 
 
