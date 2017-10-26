@@ -58,11 +58,11 @@ angle_coeff     1 10 180 # or 10 kcal / mol / rad^2 (paper ^ has wrong units)
 ### divide up box / setup measurement chunks
 
 variable  bx1 equal   0
-variable  bx2 equal  80
+variable  bx2 equal  30
 variable  by1 equal   0
-variable  by2 equal  80
+variable  by2 equal  30
 variable  bz1 equal  0
-variable  bz2 equal 80
+variable  bz2 equal 200
 variable  zL equal (v_bz2-v_bz1)/20
 
 region  sink_l block ${bx1} ${bx2} ${by1} ${by2} ${bz1} $(v_bz1 + v_zL) units box
@@ -187,7 +187,7 @@ print "** NVE RUN ** "
 variable cvl_xsection equal (v_bx2-v_bx1)*(v_by2-v_by1)
 variable cvl_volume equal v_cvl_xsection*6*v_zL
 
-variable e_applied equal 0.00020
+variable e_applied equal 0.0040
 variable J_expected equal v_e_applied/v_cvl_xsection
 
 fix source all heat 1 $(2*v_e_applied) region source
