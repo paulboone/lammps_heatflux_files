@@ -98,11 +98,11 @@ def generate_lammps_data_file(masses, atoms, bonds, angles, xb, yb, zb):
         atom_lines += [" ".join(map(str, atom_tuple))]
 
     for i, bond in enumerate(bonds):
-        bond_tuple = (i + 1, 1, *bond)
+        bond_tuple = (i + 1, 1, bond[0] + 1, bond[1] + 1)
         bond_lines += [" ".join(map(str, bond_tuple))]
 
     for i, angle in enumerate(angles):
-        angle_tuple = (i + 1, 1, *angle)
+        angle_tuple = (i + 1, 1, angle[0] + 1, angle[1] + 1, angle[2] + 1)
         angle_lines += [" ".join(map(str, angle_tuple))]
 
 

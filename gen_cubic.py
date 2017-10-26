@@ -3,7 +3,7 @@ import numpy as np
 import periodic_crystal as pc
 
 
-extend_xyz = np.array([1,1,2])
+extend_xyz = np.array([3,3,20])
 linker_length = 10 # angstroms
 bl = linker_length / 3
 atoms = np.array([(0, 0, 0, 0), (1, bl, 0, 0), (2, 2*bl, 0, 0),
