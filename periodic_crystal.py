@@ -14,6 +14,8 @@ def get_angles(bonds):
                     atom2 = [b for b in b2 if b != shared_atom[0]][0]
                     other_atoms = sorted([atom1, atom2])
                     angles.append((other_atoms[0], shared_atom[0], other_atoms[1]))
+                    # print('bonds', b1, b2, shared_atom, (other_atoms[0], shared_atom[0], other_atoms[1]))
+
     return sorted(angles)
 
 
@@ -30,7 +32,50 @@ def calculate_angle(p1, p2, p3):
     v21 = p1 - p2
     v23 = p3 - p2
     angle = np.arccos(np.dot(v21, v23) / (np.linalg.norm(v21) * np.linalg.norm(v23)))
+    # print(np.degrees(angle))
     return np.degrees(angle)
+
+def correct_angle(p1, p2, p3, box_size, unit_size):
+    p1 = np.array(p1); p2 = np.array(p2); p3 = np.array(p3)
+    # print(p1, p2, p3, box_size, unit_size)
+
+    coords1 = np.array(atom_position_to_box_coords(*p1, *unit_size))
+    coords2 = np.array(atom_position_to_box_coords(*p2, *unit_size))
+    coords3 = np.array(atom_position_to_box_coords(*p3, *unit_size))
+
+    corrected_point1 = np.copy(p1)
+    if np.sqrt(np.dot(p2 - p1, p2 - p1)) > unit_size[0] / 2:
+        offset1 = np.sign(coords2 - coords1) * box_size * unit_size
+        corrected_point1 += offset1
+
+    corrected_point3 = np.copy(p3)
+    if np.sqrt(np.dot(p2 - p3, p2 - p3)) > unit_size[0] / 2:
+        offset3 = np.sign(coords2 - coords3) * box_size * unit_size
+        corrected_point3 += offset3
+
+    # print("points_orig", p1, p2, p3)
+    # print("coords", coords1, coords2, coords3)
+    # # print("offsets", offset1, offset3)
+    # print("points_corr", corrected_point1, p2, corrected_point3)
+    # print("-----")
+    return (corrected_point1, p2, corrected_point3)
+
+
+
+def atom_position_to_box_coords(x, y, z, sx, sy, sz):
+    # print('atom_position_to_box_coords', x, y, z, sx, sy, sz)
+    return (x // sx, y // sy, z // sz)
+
+def coord_to_index(x, y, z, bx, by, bz):
+    return z * bx * by + y * bx + x
+
+def index_to_coord(i, bx, by, bz):
+    z = i // (bx * by)
+    y = (i % (bx * by)) // bx
+    z = (i % (bx * by)) % bx
+    return (x,y,z)
+
+
 
 def generate_lammps_data_file(masses, atoms, bonds, angles, xb, yb, zb):
     atom_lines = []
@@ -40,17 +85,16 @@ def generate_lammps_data_file(masses, atoms, bonds, angles, xb, yb, zb):
 
     for i, atom in enumerate(atoms):
         atom_id, x, y, z = atom
-        atom_tuple = (int(atom_id), 1, 1, 0, x, y, z)
-        atom_lines += [" ".join(map(str,atom_tuple))]
+        atom_tuple = (int(atom_id + 1), 1, 1, 0, x, y, z)
+        atom_lines += [" ".join(map(str, atom_tuple))]
 
     for i, bond in enumerate(bonds):
-        bond_tuple = (i, 1, *bond)
-        bond_lines += [" ".join(map(str,bond_tuple))]
+        bond_tuple = (i + 1, 1, *bond)
+        bond_lines += [" ".join(map(str, bond_tuple))]
 
-    # for i, angle in enumerate(angles):
-    #     # abs_angle = [str(starting_atom_num + i - 1) for i in angle]
-    #     angle_tuple = (str(angle_num), str(angle_type), *abs_angle)
-    #     angles += [" ".join(angle_tuple)]
+    for i, angle in enumerate(angles):
+        angle_tuple = (i + 1, 1, *angle)
+        angle_lines += [" ".join(map(str, angle_tuple))]
 
 
     s = ""
@@ -80,14 +124,6 @@ def generate_lammps_data_file(masses, atoms, bonds, angles, xb, yb, zb):
     return s
 
 
-def coord_to_index(x, y, z, bx, by, bz):
-    return z * bx * by + y * bx + x
-
-def index_to_coord(i, bx, by, bz):
-    z = i // (bx * by)
-    y = (i % (bx * by)) // bx
-    z = (i % (bx * by)) % bx
-    return (x,y,z)
 
 def extend(atoms, int_bonds, ext_bonds, box_size, extend_dims):
     all_atoms = []
@@ -125,23 +161,44 @@ def extend(atoms, int_bonds, ext_bonds, box_size, extend_dims):
     return all_atoms, all_bonds
 
 
-
+extend_xyz = np.array([1,1,2])
 linker_length = 10 # angstroms
 bl = linker_length / 3
 atoms = np.array([(0, 0, 0, 0), (1, bl, 0, 0), (2, 2*bl, 0, 0),
          (3, 0, bl, 0), (4, 0, 2*bl, 0),
          (5, 0, 0, bl), (6, 0, 0, 2*bl)])
-int_bonds = np.array([(0,1), (1,2), (0,3), (3,4), (0,5), (0,6)])
+int_bonds = np.array([(0,1), (1,2), (0,3), (3,4), (0,5), (5,6)])
 
-
-ext_bonds = np.array([[(0,2)], [(0,4)], [(0,6)]])
+ext_bonds = np.array([[(2,0)], [(0,4)], [(0,6)]])
 
 box_bounds = np.array([linker_length, linker_length, linker_length])
-extend_xyz = np.array([5,5,5])
 allatoms, allbonds = extend(atoms, int_bonds, ext_bonds, box_bounds, extend_xyz)
 allbox_bounds = [np.array([0,d]) for d in extend_xyz * box_bounds]
 
-# TODO: need to automatically generate angles!!
+# print('allatoms')
+# for a in allatoms:
+#     print(a)
 
-lammps_data_file = generate_lammps_data_file([1], allatoms, allbonds, [], (0,20), (0,20), (0,20))
-print(lammps_data_file)
+print(allbonds)
+
+allowable_angles = [0,180]
+allangles = get_angles(allbonds)
+angles_to_use = []
+for a in allangles:
+    # print(a)
+    # print(allatoms[a[0]][1:], allatoms[a[1]][1:], allatoms[a[2]][1:])
+
+    corrected_points = correct_angle(allatoms[a[0]][1:], allatoms[a[1]][1:], allatoms[a[2]][1:], extend_xyz, box_bounds)
+    angle_degrees = calculate_angle(*corrected_points)
+    print('angle: ', a, angle_degrees)
+    # print()
+    if angle_degrees in allowable_angles:
+        angles_to_use.append(a)
+
+
+lammps_data_file = generate_lammps_data_file([39.948], allatoms, allbonds, allangles,
+                    (0,extend_xyz[0]*linker_length),
+                    (0,extend_xyz[1]*linker_length),
+                    (0,extend_xyz[2]*linker_length))
+
+# print(lammps_data_file)
