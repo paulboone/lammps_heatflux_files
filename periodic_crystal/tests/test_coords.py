@@ -1,20 +1,14 @@
 
-
-
-# def atom_position_to_box_coords(x, y, z, sx, sy, sz):
-#     # print('atom_position_to_box_coords', x, y, z, sx, sy, sz)
-#     return (x // sx, y // sy, z // sz)
-#
-# def coord_to_index(x, y, z, bx, by, bz):
-#     return z * bx * by + y * bx + x
-#
-# def index_to_coord(i, bx, by, bz):
-#     z = i // (bx * by)
-#     y = (i % (bx * by)) // bx
-#     z = (i % (bx * by)) % bx
-#     return (x,y,z)
-
 from periodic_crystal import coord_to_index, index_to_coord
+from periodic_crystal import atom_position_to_box_coords
+
+def test_atom_position_to_box_coords_box_10x10x10():
+    s = (10,10,10)
+    assert(atom_position_to_box_coords(0,0,0,*s) == (0,0,0))
+    assert(atom_position_to_box_coords(5,5,5,*s) == (0,0,0))
+    assert(atom_position_to_box_coords(10,0,0,*s) == (1,0,0))
+    assert(atom_position_to_box_coords(10,10,10,*s) == (1,1,1))
+    assert(atom_position_to_box_coords(80,55,301,*s) == (8,5,30))
 
 def test_coord_to_index_box_2x2x2():
     b = (2,2,2)

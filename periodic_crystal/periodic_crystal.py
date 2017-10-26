@@ -87,7 +87,6 @@ def index_to_coord(i, bx, by, bz):
     return (x,y,z)
 
 
-
 def generate_lammps_data_file(masses, atoms, bonds, angles, xb, yb, zb):
     atom_lines = []
     bond_lines = []
@@ -141,9 +140,9 @@ def extend(atoms, int_bonds, ext_bonds, box_size, extend_dims):
     all_bonds = []
     combinations = []
     atom_ids = list(np.arange(len(atoms)))
-    for d2 in np.arange(extend_dims[0]):
+    for d2 in np.arange(extend_dims[2]):
         for d1 in np.arange(extend_dims[1]):
-            for d0 in np.arange(extend_dims[2]):
+            for d0 in np.arange(extend_dims[0]):
                 combinations += [(d0,d1,d2)]
 
 
@@ -161,6 +160,7 @@ def extend(atoms, int_bonds, ext_bonds, box_size, extend_dims):
         # know what their future coords will be
         print('coord ', dmult)
         print(coord_to_index((cx + 1) % extend_dims[0], cy, cz, *extend_dims))
+        # coord_to_index(coord_plus_neighbors(dmult, *extend_dims)
         atom_dir_offset = (atom_id_offset, coord_to_index((cx + 1) % extend_dims[0], cy, cz, *extend_dims) * len(atoms))
         print('atom_dir_offset x: ', atom_dir_offset)
         all_bonds += (ext_bonds[0] + atom_dir_offset).tolist()
