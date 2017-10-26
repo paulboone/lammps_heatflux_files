@@ -2,6 +2,33 @@
 
 # templates for modification
 
+########## i1
+lmp_avgs_to_tsv.py ./J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $3+$5+$7-2*$4-($10+$12+$14-2*$11), $3+$5+$8-$4-($10+$12+$15-$11), $7-$4-($14-$11), $8-$15;}' | tsv_eq_trends.py -c 1 "CV_o" -c 2 "CV_i" -c 3 "CV_ao" -c 4 "CV_ai" -n 10 -s 0
+lmp_avgs_to_tsv.py J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, ($10-$9)-($3-$2), ($12-$9)-($5-$2), ($14-$9)-($7-$2), $15-$8, $9-$2;}' |  tsv_plot_stacked_bar.py -r 100 4300 --avg-every 1000 --title "Heat Flux Breakdown (improved angle)" -c 1 Pair -c 2 Bond -c 4 Angle -c 5 "Convection (KE + PE)" && open tempoutcols.png
+
+#angle importance 1
+lmp_avgs_to_tsv.py pe10K.out | tsv_eq_trends.py -c 2 AnglePE -c 1 AllPE --nrows 500 -s 500
+#angle importance 2
+lmp_avgs_to_tsv.py pe1.out | tsv_stats.py -r 3000000 43000000
+
+# debugging
+lmp_chunks_to_tsv.py temps10_10K.out | tsv_plot_chunks.py  --yl "Temp [K]" --xl "Z [A]" --avg-every 10 --yr 0 500 --xr 0 40 --plot-every 5 -v 0 2 '#c7d9e8' -v 4 16 0.90 -v 18 22 '#f6d5ac' -v 24 36 0.9 -v 38 40 '#c7d9e8' --chunksize 2 && open tempout.chunks.png
+
+# last 4 graphs for taking ∆T
+# lmp_chunks_to_tsv.py temps10_10K.out | tsv_plot_chunks.py  --yl "Temp [K]" --xl "Z [A]" --avg-every 10 --yr 200 400 --xr 0 40 --plot-every 25 -r 3500 4300 -v 0 2 '#c7d9e8' -v 4 16 0.90 -v 18 22 '#f6d5ac' -v 24 36 0.9 -v 38 40 '#c7d9e8' --chunksize 3.5 && open tempout.chunks.png
+
+# take CVL rows only and linear fit
+lmp_chunks_to_tsv.py temps10_10K.out | cut -f 1,6-17 | tsv_plot_chunks.py --avg-every 10 --show-fit --yl "Temp [K]" --xl "CVL Chunk" --yr 280 320 --rows 0 200 --chunksize 2 --xlabel "CVL Position (Angstroms)" && open tempout.chunks.png
+
+# take CVR rows only and linear fit
+lmp_chunks_to_tsv.py temps10_10K.out | cut -f 1,26-37 | tsv_plot_chunks.py --avg-every 10 --show-fit --yl "Temp [K]" --xl "CVR Chunk" --yr 280 320 --rows 0 200 --chunksize 2 --xlabel "CVR Position (Angstroms)" && open tempout.chunks.png
+
+
+########## i1 END
+
+
+
+
 ########## p8
 lmp_avgs_to_tsv.py ./J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $3+$5+$7-2*$4-($10+$12+$14-2*$11), $3+$5+$8-$4-($10+$12+$15-$11), $7-$4-($14-$11), $8-$15;}' | tsv_eq_trends.py -c 1 "CV_o" -c 2 "CV_i" -c 3 "CV_ao" -c 4 "CV_ai" -n 500 -s 500
 lmp_avgs_to_tsv.py J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, ($10-$9)-($3-$2), ($12-$9)-($5-$2), ($14-$9)-($7-$2), $15-$8, $9-$2;}' |  tsv_plot_stacked_bar.py -r 100 4300 --avg-every 1000 --title "Heat Flux Breakdown (improved angle)" -c 1 Pair -c 2 Bond -c 4 Angle -c 5 "Convection (KE + PE)" && open tempoutcols.png
