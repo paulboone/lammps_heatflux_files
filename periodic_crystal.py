@@ -148,13 +148,18 @@ def extend(atoms, int_bonds, ext_bonds, box_size, extend_dims):
         # connect in +x, +y, +z directions
         # note that it is ok to do this without the atoms already existing because we
         # know what their future coords will be
-        atom_dir_offset = (atom_id_offset, coord_to_index((cx + 1) % extend_dims[0] , cy, cz, *extend_dims) * len(atoms))
+        print('coord ', dmult)
+        print(coord_to_index((cx + 1) % extend_dims[0], cy, cz, *extend_dims))
+        atom_dir_offset = (atom_id_offset, coord_to_index((cx + 1) % extend_dims[0], cy, cz, *extend_dims) * len(atoms))
+        print('atom_dir_offset x: ', atom_dir_offset)
         all_bonds += (ext_bonds[0] + atom_dir_offset).tolist()
 
         atom_dir_offset = (atom_id_offset, coord_to_index(cx, (cy + 1) % extend_dims[1], cz, *extend_dims) * len(atoms))
+        print('atom_dir_offset y: ', atom_dir_offset)
         all_bonds += (ext_bonds[1] + atom_dir_offset).tolist()
 
         atom_dir_offset = (atom_id_offset, coord_to_index(cx, cy, (cz + 1) % extend_dims[2], *extend_dims) * len(atoms))
+        print('atom_dir_offset z: ', atom_dir_offset)
         all_bonds += (ext_bonds[2] + atom_dir_offset).tolist()
 
 
@@ -169,26 +174,31 @@ atoms = np.array([(0, 0, 0, 0), (1, bl, 0, 0), (2, 2*bl, 0, 0),
          (5, 0, 0, bl), (6, 0, 0, 2*bl)])
 int_bonds = np.array([(0,1), (1,2), (0,3), (3,4), (0,5), (5,6)])
 
-ext_bonds = np.array([[(2,0)], [(0,4)], [(0,6)]])
+# ext_bonds are defined tuple of:
+# 1) atom in this box, atom in +x direction
+# 2) atom in this box, atom in +y direction
+# 3) atom in this box, atom in +z direction
+
+ext_bonds = np.array([[(2,0)], [(4,0)], [(6,0)]])
 
 box_bounds = np.array([linker_length, linker_length, linker_length])
-allatoms, allbonds = extend(atoms, int_bonds, ext_bonds, box_bounds, extend_xyz)
+all_atoms, all_bonds = extend(atoms, int_bonds, ext_bonds, box_bounds, extend_xyz)
 allbox_bounds = [np.array([0,d]) for d in extend_xyz * box_bounds]
 
-# print('allatoms')
-# for a in allatoms:
+# print('all_atoms')
+# for a in all_atoms:
 #     print(a)
 
-print(allbonds)
+print(all_bonds)
 
 allowable_angles = [0,180]
-allangles = get_angles(allbonds)
+allangles = get_angles(all_bonds)
 angles_to_use = []
 for a in allangles:
     # print(a)
-    # print(allatoms[a[0]][1:], allatoms[a[1]][1:], allatoms[a[2]][1:])
+    # print(all_atoms[a[0]][1:], all_atoms[a[1]][1:], all_atoms[a[2]][1:])
 
-    corrected_points = correct_angle(allatoms[a[0]][1:], allatoms[a[1]][1:], allatoms[a[2]][1:], extend_xyz, box_bounds)
+    corrected_points = correct_angle(all_atoms[a[0]][1:], all_atoms[a[1]][1:], all_atoms[a[2]][1:], extend_xyz, box_bounds)
     angle_degrees = calculate_angle(*corrected_points)
     print('angle: ', a, angle_degrees)
     # print()
@@ -196,7 +206,7 @@ for a in allangles:
         angles_to_use.append(a)
 
 
-lammps_data_file = generate_lammps_data_file([39.948], allatoms, allbonds, allangles,
+lammps_data_file = generate_lammps_data_file([39.948], all_atoms, all_bonds, allangles,
                     (0,extend_xyz[0]*linker_length),
                     (0,extend_xyz[1]*linker_length),
                     (0,extend_xyz[2]*linker_length))
