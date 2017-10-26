@@ -1,1 +1,1 @@
-import * from periodic_crystal
+from periodic_crystal.periodic_crystal import *
