@@ -2,7 +2,6 @@ import numpy as np
 
 import periodic_crystal as pc
 
-
 extend_xyz = np.array([3,3,20])
 linker_length = 10 # angstroms
 bl = linker_length / 3
@@ -20,20 +19,10 @@ ext_bonds = np.array([[(2,0)], [(4,0)], [(6,0)]])
 box_bounds = np.array([linker_length, linker_length, linker_length])
 all_atoms, all_bonds = pc.extend(atoms, int_bonds, ext_bonds, box_bounds, extend_xyz)
 allbox_bounds = [np.array([0,d]) for d in extend_xyz * box_bounds]
-
-allowable_angles = [0,180]
-all_angles = pc.get_angles(all_bonds)
-angles_to_use = []
-for a in all_angles:
-    points = [all_atoms[a[0]][1:], all_atoms[a[1]][1:], all_atoms[a[2]][1:]]
-    # corrected_points = pc.correct_angle(all_atoms[a[0]][1:], all_atoms[a[1]][1:], all_atoms[a[2]][1:], extend_xyz, box_bounds)
-    angle_degrees = pc.calculate_angle(*points)
-
-    if angle_degrees in allowable_angles:
-        angles_to_use.append(a)
+all_angles = limit_to_angles(pc.get_angles(all_bonds), [0,180])
 
 print('angles_to_use: ', angles_to_use)
-lammps_data_file = pc.generate_lammps_data_file([39.948], all_atoms, all_bonds, angles_to_use,
+lammps_data_file = pc.generate_lammps_data_file([39.948], all_atoms, all_bonds, all_angles,
                     (0,extend_xyz[0]*linker_length),
                     (0,extend_xyz[1]*linker_length),
                     (0,extend_xyz[2]*linker_length))

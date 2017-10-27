@@ -17,6 +17,17 @@ def get_angles(bonds):
 
     return sorted(angles)
 
+def limit_to_angles(all_angles, allowable_angles):
+    angles = []
+    for a in all_angles:
+        points = [all_atoms[a[0]][1:], all_atoms[a[1]][1:], all_atoms[a[2]][1:]]
+        # corrected_points = pc.correct_angle(all_atoms[a[0]][1:], all_atoms[a[1]][1:], all_atoms[a[2]][1:], extend_xyz, box_bounds)
+        angle_degrees = pc.calculate_angle(*points)
+
+        if angle_degrees in allowable_angles:
+            angles.append(a)
+
+    return angles
 
 def calculate_angle(p1, p2, p3):
     """ Calculate angle for three given points in space
