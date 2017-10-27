@@ -25,7 +25,7 @@ def limit_to_angles(all_angles, allowable_angles):
         angle_degrees = pc.calculate_angle(*points)
 
         if angle_degrees in allowable_angles:
-            angles.append(a)
+            angles.append()
 
     return angles
 
@@ -168,15 +168,11 @@ def extend(atoms, int_bonds, ext_bonds, box_size, extend_dims):
         # connect in +x, +y, +z directions
         # note that it is ok to do this without the atoms already existing because we
         # know what their future coords will be
+        for ebond, edir in ext_bonds:
+            dest_coord = (np.array(dmult) + edir) % extend_dims
+            atom_dir_offset = (atom_id_offset, coord_to_index(*dest_coord, *extend_dims) * len(atoms))
+            all_bonds.append((np.array(ebond) + atom_dir_offset).tolist())
 
-        atom_dir_offset = (atom_id_offset, coord_to_index((cx + 1) % extend_dims[0], cy, cz, *extend_dims) * len(atoms))
-        all_bonds += (ext_bonds[0] + atom_dir_offset).tolist()
-
-        atom_dir_offset = (atom_id_offset, coord_to_index(cx, (cy + 1) % extend_dims[1], cz, *extend_dims) * len(atoms))
-        all_bonds += (ext_bonds[1] + atom_dir_offset).tolist()
-
-        atom_dir_offset = (atom_id_offset, coord_to_index(cx, cy, (cz + 1) % extend_dims[2], *extend_dims) * len(atoms))
-        all_bonds += (ext_bonds[2] + atom_dir_offset).tolist()
 
 
     return all_atoms, all_bonds
