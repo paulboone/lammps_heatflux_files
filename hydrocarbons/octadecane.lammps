@@ -13,8 +13,8 @@ print "Restart at step: ${restartAtStep} "
 print "Restart filename: ${restartFileName} "
 
 
-variable        initialDataFile string propane447_50atm.data
-variable        simTemp equal 258
+variable        initialDataFile string octadecane.data
+variable        simTemp equal 300
 
 variable quenchTemp equal ${simTemp} # change if want to quench
 
@@ -32,8 +32,12 @@ if "${restartAtStep} > 0" then &
 
 label load_data
 read_data       ${initialDataFile}
-#read_data       ${initialDataFile} add append shift 0.0 0.0 80.0
-#read_data       ${initialDataFile} add append shift 0.0 0.0 160.0
+read_data       ${initialDataFile} add append shift 0.0 0.0 73
+read_data       ${initialDataFile} add append shift 0.0 0.0 146
+read_data       ${initialDataFile} add append shift 0.0 0.0 219
+read_data       ${initialDataFile} add append shift 0.0 0.0 292
+read_data       ${initialDataFile} add append shift 0.0 0.0 365
+read_data       ${initialDataFile} add append shift 0.0 0.0 438
 velocity        all create ${simTemp} 123123 dist uniform
 
 label after_load_data
@@ -51,22 +55,25 @@ bond_style      harmonic
 angle_style     harmonic
 dihedral_style  opls # not needed for propane
 
-# see spreadsheet lammps-config-units.xlsx for sources and calculations for the coefficients
-pair_coeff      1 1 0.2039 3.930 #CH3
-pair_coeff      2 2 0.0910 3.857 #CH2
+# see spreadsheet h1-lammps-config-units.xlsx for sources and calculations for the coefficients
+pair_coeff      1 1 0.0910 3.930 #note atom type 1 is CH2 with this data file, which is reversed from how we did Propane
+pair_coeff      2 2 0.2067 3.910 #CH3
 
 bond_coeff      1 95.883 1.54
 angle_coeff     1 62.100 114
 
+dihedral_coeff  1 1.411 -0.2710 3.145 0
+special_bonds   lj 0.0 0.0 0.0
+
 #################################################################################################
 ### divide up box / setup measurement chunks
 
-variable  bx1 equal   0
-variable  bx2 equal  21
-variable  by1 equal   0
-variable  by2 equal  21
-variable  bz1 equal  0
-variable  bz2 equal 140
+variable  bx1 equal   -2
+variable  bx2 equal  71
+variable  by1 equal   -2
+variable  by2 equal  71
+variable  bz1 equal  -2
+variable  bz2 equal 509
 variable  zL equal (v_bz2-v_bz1)/20
 
 region  sink_l block ${bx1} ${bx2} ${by1} ${by2} ${bz1} $(v_bz1 + v_zL) units box
