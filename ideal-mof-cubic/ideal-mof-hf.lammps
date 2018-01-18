@@ -13,7 +13,7 @@ print "Restart at step: ${restartAtStep} "
 print "Restart filename: ${restartFileName} "
 
 
-variable        initialDataFile string cubic.data
+variable        initialDataFile string cubic_3x20x20.data
 variable        simTemp equal 300
 
 variable quenchTemp equal ${simTemp} # change if want to quench
