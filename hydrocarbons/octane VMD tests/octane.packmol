@@ -1,9 +1,9 @@
 tolerance 2.0
 
-output octane.xyz
+output octane_packed.xyz
 filetype xyz
 
-structure chain.xyz
-  number 2
-  inside box 0.0 0.0 0.0 20. 20. 20.
+structure octane.xyz
+  number 484
+  inside box 1.0 1.0 1.0 24.84 24.84 231.57
 end structure
