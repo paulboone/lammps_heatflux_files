@@ -1,0 +1,9 @@
+tolerance 2.0
+
+output octane.xyz
+filetype xyz
+
+structure chain.xyz
+  number 2
+  inside box 0.0 0.0 0.0 20. 20. 20.
+end structure
