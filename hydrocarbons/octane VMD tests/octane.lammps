@@ -54,9 +54,12 @@ pair_coeff      1 1 0.0910 3.930 #note atom type 1 is CH2 with this data file, w
 pair_coeff      2 2 0.2067 3.910 #CH3
 
 bond_coeff      1 95.883 1.54
+
 angle_coeff     1 62.100 114
+angle_coeff     2 62.100 114
 
 dihedral_coeff  1 1.411 -0.2710 3.145 0
+dihedral_coeff  2 1.411 -0.2710 3.145 0
 special_bonds   lj 0.0 0.0 0.0
 
 #################################################################################################
