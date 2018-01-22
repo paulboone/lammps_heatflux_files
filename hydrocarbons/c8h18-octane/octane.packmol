@@ -5,5 +5,5 @@ filetype xyz
 
 structure octane.xyz
   number 484
-  inside box 1.0 1.0 1.0 24.84 24.84 231.57
+  inside box 1.0 1.0 1.0 24.84 24.84 171.27
 end structure
