@@ -23,3 +23,5 @@ mol reanalyze top
 
 pbc set {25.84 25.84 172.27 90.0 90.0 90.0}
 topo writelammpsdata octane.data full
+
+exit 0
