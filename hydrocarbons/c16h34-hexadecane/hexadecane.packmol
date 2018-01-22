@@ -1,0 +1,9 @@
+tolerance 2.0
+
+output hexadecane_packed.xyz
+filetype xyz
+
+structure hexadecane.xyz
+  number 511
+  inside box 1.0 1.0 1.0 35.17 35.17 240.16
+end structure
