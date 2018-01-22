@@ -103,10 +103,10 @@ fix  PE1 all ave/time 1  1  1 c_PE_TOT_ANGLE c_PE_TOT_ALL c_KE_TOT file energy1.
 if "${restartAtStep} > 0" then "jump SELF after_NVT_eq"
 print "** NVT EQUILIBRATION ** "
 thermo_style custom step vol temp press density etotal
-thermo         100
+thermo         10000
 thermo_modify  flush yes
 restart        1000000 nvt-eq.*.restart
-dump dump1 all xyz 100 nvt-eq.dump.*.xyz
+dump dump1 all xyz 1000000 nvt-eq.dump.*.xyz
 
 fix           NVT_eq all nvt temp ${simTemp} ${simTemp} 50
 run           2000000
