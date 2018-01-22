@@ -65,12 +65,12 @@ special_bonds   lj 0.0 0.0 0.0
 #################################################################################################
 ### divide up box / setup measurement chunks
 
-variable  bx1 equal   -0.042139
-variable  bx2 equal  25.797861
-variable  by1 equal   0.037034
-variable  by2 equal  25.877034
-variable  bz1 equal   -0.270039
-variable  bz2 equal 171.999965
+variable  bx1 equal   -0.033529
+variable  bx2 equal  36.136469
+variable  by1 equal   0.013709
+variable  by2 equal  36.183707
+variable  bz1 equal   -0.432979
+variable  bz2 equal 240.727025
 variable  zL equal (v_bz2-v_bz1)/20
 
 region  sink_l block ${bx1} ${bx2} ${by1} ${by2} ${bz1} $(v_bz1 + v_zL) units box
