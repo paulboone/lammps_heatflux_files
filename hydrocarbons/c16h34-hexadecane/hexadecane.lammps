@@ -123,41 +123,38 @@ compute KE         all ke/atom
 compute STRESS_p   all stress/atom NULL pair
 compute STRESS_b   all stress/atom NULL bond
 compute STRESS_a   all stress/atom NULL angle
+compute STRESS_d   all stress/atom NULL dihedral
+compute STRESS_i   all stress/atom NULL improper
 
 compute J_cvl_p    gcvl heat/flux KE PE STRESS_p
 compute J_cvl_b    gcvl heat/flux KE PE STRESS_b
 compute J_cvl_a    gcvl heat/flux KE PE STRESS_a
-compute J_cvl_i    gcvl heat/flux_improved_atom angle
+compute J_cvl_d    gcvl heat/flux KE PE STRESS_d
+compute J_cvl_i    gcvl heat/flux KE PE STRESS_i
+compute J_cvl_ai    gcvl heat/flux_improved_atom angle
+compute J_cvl_di    gcvl heat/flux_improved_atom dihedral
+# compute J_cvl_ii    gcvl heat/flux_improved_atom improper
+variable ii_placeholder equal 0.0
 
 compute J_cvr_p    gcvr heat/flux KE PE STRESS_p
 compute J_cvr_b    gcvr heat/flux KE PE STRESS_b
 compute J_cvr_a    gcvr heat/flux KE PE STRESS_a
-compute J_cvr_i    gcvr heat/flux_improved_atom angle
+compute J_cvr_d    gcvl heat/flux KE PE STRESS_d
+compute J_cvr_i    gcvl heat/flux KE PE STRESS_i
+compute J_cvr_ai    gcvr heat/flux_improved_atom angle
+compute J_cvr_di    gcvr heat/flux_improved_atom dihedral
+# compute J_cvr_ii    gcvr heat/flux_improved_atom improper
 
-variable J_cvl equal (c_J_cvl_p[3]+c_J_cvl_b[3]+c_J_cvl_i[3])
-variable J_cvr equal (c_J_cvr_p[3]+c_J_cvr_b[3]+c_J_cvr_i[3])
+variable J_cvl equal (c_J_cvl_p[3]+c_J_cvl_b[3]+c_J_cvl_ai[3]+c_J_cvl_di[3]) #+c_J_cvl_ii[3]
+variable J_cvr equal (c_J_cvr_p[3]+c_J_cvr_b[3]+c_J_cvr_ai[3]+c_J_cvr_di[3]) #+c_J_cvr_ii[3]
 
 fix  J1_10 all ave/time 1  10000  10000 &
-    c_J_cvl_p[6] c_J_cvl_p[3]   &
-    c_J_cvl_b[6] c_J_cvl_b[3]   &
-    c_J_cvl_a[6] c_J_cvl_a[3]   &
-    c_J_cvl_i[3]   &
-    c_J_cvr_p[6] c_J_cvr_p[3]   &
-    c_J_cvr_b[6] c_J_cvr_b[3]   &
-    c_J_cvr_a[6] c_J_cvr_a[3]   &
-    c_J_cvr_i[3]   &
+    c_J_cvl_p[6] c_J_cvl_p[3] c_J_cvl_b[3] c_J_cvl_a[3] c_J_cvl_d[3] c_J_cvl_i[3] &
+    c_J_cvl_ai[3] c_J_cvl_di[3] v_ii_placeholder &
+    c_J_cvr_p[6] c_J_cvr_p[3] c_J_cvr_b[3] c_J_cvr_a[3] c_J_cvr_d[3] c_J_cvr_i[3] &
+    c_J_cvr_ai[3] c_J_cvr_di[3] v_ii_placeholder &
     file J1_10K.out
 
-fix  J10all all ave/time 1  10000  10000 &
-    c_J_cvl_p[1] c_J_cvl_p[2] c_J_cvl_p[3] c_J_cvl_p[4] c_J_cvl_p[5] c_J_cvl_p[6] &
-    c_J_cvl_b[1] c_J_cvl_b[2] c_J_cvl_b[3] c_J_cvl_b[4] c_J_cvl_b[5] c_J_cvl_b[6] &
-    c_J_cvl_a[1] c_J_cvl_a[2] c_J_cvl_a[3] c_J_cvl_a[4] c_J_cvl_a[5] c_J_cvl_a[6] &
-    c_J_cvl_i[1] c_J_cvl_i[2] c_J_cvl_i[3] &
-    c_J_cvr_p[1] c_J_cvr_p[2] c_J_cvr_p[3] c_J_cvr_p[4] c_J_cvr_p[5] c_J_cvr_p[6] &
-    c_J_cvr_b[1] c_J_cvr_b[2] c_J_cvr_b[3] c_J_cvr_b[4] c_J_cvr_b[5] c_J_cvr_b[6] &
-    c_J_cvr_a[1] c_J_cvr_a[2] c_J_cvr_a[3] c_J_cvr_a[4] c_J_cvr_a[5] c_J_cvr_a[6] &
-    c_J_cvr_i[1] c_J_cvr_i[2] c_J_cvr_i[3] &
-    file J10Kall.out
 
 #################################################################################################
 ### NVE equilibration
