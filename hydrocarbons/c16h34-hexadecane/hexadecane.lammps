@@ -194,6 +194,4 @@ thermo         10000
 thermo_modify flush yes
 restart        1000000 nve.*.restart
 dump dump3 all xyz 1000000 nve.dump.*.xyz
-dump dumpt all custom 10000 nve.energies-dump.*.custom id x y z c_KE c_PE
-dump_modify dumpt sort id
 run           45000000 upto
