@@ -180,7 +180,7 @@ print "** NVE RUN ** "
 variable cvl_xsection equal (v_bx2-v_bx1)*(v_by2-v_by1)
 variable cvl_volume equal v_cvl_xsection*6*v_zL
 
-variable e_applied equal 0.000339
+variable e_applied equal 0.0008348
 variable J_expected equal v_e_applied/v_cvl_xsection
 
 fix source all heat 1 $(2*v_e_applied) region source
