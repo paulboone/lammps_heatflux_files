@@ -131,18 +131,18 @@ compute J_cvl_b    gcvl heat/flux KE PE STRESS_b
 compute J_cvl_a    gcvl heat/flux KE PE STRESS_a
 compute J_cvl_d    gcvl heat/flux KE PE STRESS_d
 compute J_cvl_i    gcvl heat/flux KE PE STRESS_i
-compute J_cvl_ai    gcvl heat/flux_improved_atom angle
-compute J_cvl_di    gcvl heat/flux_improved_atom dihedral
+compute J_cvl_ai   gcvl heat/flux_improved_atom angle
+compute J_cvl_di   gcvl heat/flux_improved_atom dihedral
 # compute J_cvl_ii    gcvl heat/flux_improved_atom improper
 variable ii_placeholder equal 0.0
 
 compute J_cvr_p    gcvr heat/flux KE PE STRESS_p
 compute J_cvr_b    gcvr heat/flux KE PE STRESS_b
 compute J_cvr_a    gcvr heat/flux KE PE STRESS_a
-compute J_cvr_d    gcvl heat/flux KE PE STRESS_d
-compute J_cvr_i    gcvl heat/flux KE PE STRESS_i
-compute J_cvr_ai    gcvr heat/flux_improved_atom angle
-compute J_cvr_di    gcvr heat/flux_improved_atom dihedral
+compute J_cvr_d    gcvr heat/flux KE PE STRESS_d
+compute J_cvr_i    gcvr heat/flux KE PE STRESS_i
+compute J_cvr_ai   gcvr heat/flux_improved_atom angle
+compute J_cvr_di   gcvr heat/flux_improved_atom dihedral
 # compute J_cvr_ii    gcvr heat/flux_improved_atom improper
 
 variable J_cvl equal (c_J_cvl_p[3]+c_J_cvl_b[3]+c_J_cvl_ai[3]+c_J_cvl_di[3]) #+c_J_cvl_ii[3]
