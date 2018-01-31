@@ -2,7 +2,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=8
 #SBATCH --cluster=smp
-#SBATCH --time=3-0
+#SBATCH --time=6-0
+#SBATCH --qos=long
 #SBATCH --job-name=c16h34
 #SBATCH --output=lammps-stdout.log
 
