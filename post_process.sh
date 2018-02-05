@@ -3,8 +3,8 @@
 # templates for modification
 
 #h1 for publication
-
-lmp_avgs_to_tsv.py ./run1/J1_10K.out ./J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$11, $3-$12-($2-$11), $4-$13-($2-$11), $5-$14-($2-$11), $6-$15-($2-$11), $7-$16-($2-$11), $8-$17, $9-$18, $10-$19, $3+$4+$5+$6+$7-4*$2-($12+$13+$14+$15+$16-4*$11), $3+$4+$8+$9+$10-($12+$13+$17+$18+$19);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_a" -c 5 "CV_d" -c 6 "CV_i" -c 7 "CV_ai" -c 8 "CV_di" -c 9 "CV_ii" -c 10 "CV_o" -c 11 "CV_i" -n 500 -s 500 | less -S
+lmp_avgs_to_tsv.py ./run1/J1_10K.out ./J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$11, $3-$12-($2-$11), $4-$13-($2-$11), $5-$14-($2-$11), $6-$15-($2-$11), $7-$16-($2-$11), $8-$17, $9-$18, $10-$19, $3+$4+$5+$6+$7-4*$2-($12+$13+$14+$15+$16-4*$11), $3+$4+$8+$9+$10-$2-($12+$13+$17+$18+$19-$11);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_a" -c 5 "CV_d" -c 6 "CV_i" -c 7 "CV_ai" -c 8 "CV_di" -c 9 "CV_ii" -c 10 "CV_o" -c 11 "CV_i" -n 500 -s 500 | less -S
+lmp_avgs_to_tsv.py ./J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$11, $3-$12-($2-$11), $4-$13-($2-$11), $5-$14-($2-$11), $6-$15-($2-$11), $7-$16-($2-$11), $8-$17, $9-$18, $10-$19, $3+$4+$5+$6+$7-4*$2-($12+$13+$14+$15+$16-4*$11), $3+$4+$8+$9+$10-$2-($12+$13+$17+$18+$19-$11);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_a" -c 5 "CV_d" -c 6 "CV_i" -c 7 "CV_ai" -c 8 "CV_di" -c 9 "CV_ii" -c 10 "CV_o" -c 11 "CV_i" -n 500 -s 500 | less -S
 
 #i1 data for publication:
 
@@ -23,7 +23,10 @@ lmp_chunks_to_tsv.py ./run1/temps10_10K.out ./temps10_10K.out | tsv_plot_chunks.
 ########## i1
 
 
-lmp_avgs_to_tsv.py ./J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $3+$5+$7-2*$4-($10+$12+$14-2*$11), $3+$5+$8-$4-($10+$12+$15-$11), $7-$4-($14-$11), $8-$15;}' | tsv_eq_trends.py -c 1 "CV_o" -c 2 "CV_i" -c 3 "CV_ao" -c 4 "CV_ai" -n 200 -s 100 | less -S
+# with KE
+lmp_avgs_to_tsv.py ./J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$11, $3+$5+$7-2*$4-($10+$12+$14-2*$11), $3+$5+$8-$4-($10+$12+$15-$11), $7-$4-($14-$11), $8-$15;}' | tsv_eq_trends.py -c 1 "CV_KE" -c 2 "CV_o" -c 3 "CV_i" -c 4 "CV_ao" -c 5 "CV_ai" -n 200 -s 100 | less -S
+
+lmp_avgs_to_tsv.py ./J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $3+$5+$7-2*$4-($10+$12+$14-2*$11), $3+$5+$8-$4-($10+$12+$15-$11), $7-$4-($14-$11), $8-$15;}' | tsv_eq_trends.py -c 1  "CV_o" -c 2 "CV_i" -c 3 "CV_ao" -c 4 "CV_ai" -n 200 -s 100 | less -S
 lmp_avgs_to_tsv.py J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, ($10-$9)-($3-$2), ($12-$9)-($5-$2), ($14-$9)-($7-$2), $15-$8, $9-$2;}' |  tsv_plot_stacked_bar.py -r 100 2100 --avg-every 450 --title "Heat Flux Breakdown (improved angle)" -c 1 Pair -c 2 Bond -c 4 Angle -c 5 "Convection (KE + PE)" && open tempout.stacked_bar.png
 
 #angle importance 1
