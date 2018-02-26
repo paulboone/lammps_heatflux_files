@@ -15,14 +15,14 @@ rcParams.update({'figure.autolayout': True})
 
 
 # by row: U + K, pair, bond, angle, dihedral, improper
-rows = np.array([[0.008430, 0.008430, 0.019800, 0.019800],
-                 [0.048900, 0.048900, 0.036600, 0.036600],
-                 [0.010200, 0.010200, 0.020000, 0.020000],
-                 [0.004070, 0.010700, 0.001190, 0.006310],
-                 [0.000252, 0.007150, 0.001040, 0.011400],
-                 [0.000000, 0.000000, 0.000000, 0.000000]])
+rows = np.array([[0.008430, 0.008430, 0.008430, 0.008430, 0.019800, 0.019800],
+                 [0.048900, 0.048900, 0.048900, 0.048900, 0.036600, 0.036600],
+                 [0.010200, 0.010200, 0.010200, 0.010200, 0.020000, 0.020000],
+                 [0.004070, 0.010700, 0.004070, 0.010700, 0.001190, 0.006310],
+                 [0.000252, 0.007150, 0.000252, 0.007150, 0.001040, 0.011400],
+                 [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]])
 
-expected_hf = np.array([0.086276, 0.086276, 0.094666, 0.094666])
+expected_hf = np.array([0.086276, 0.086276, 0.086276, 0.086276, 0.094666, 0.094666])
 
 # now in fraction total expected
 rows = rows / expected_hf
@@ -38,28 +38,29 @@ num_plots = 1
 bar_width = 0.65
 bar_buffer = bar_width / 2
 bar_indices = np.arange(len(rows))
-bar_x = np.array([1,2,4,5])
+bar_x = np.array([1,2,3.5,4.5,6,7])
 
 
 
 #### plot all plots
-fig = plt.figure(figsize=(7,5))
+fig = plt.figure(figsize=(8,6))
 fig.set_tight_layout(False)
 fig.subplots_adjust(right=0.8)
 ax = fig.add_subplot(1, 1, 1)
 
-ax.set_title("Per-term original and corrected heat fluxes for hydrocarbons", weight="bold")
+# ax.set_title("Per-term original and corrected heat fluxes for hydrocarbons", weight="bold")
 ax.set_xlabel("")
 ax.set_ylabel("Fraction of expected Heat Flux")
 
 ax.yaxis.grid(linestyle='-', color='0.7', zorder=0)
 ax.set_xticks(bar_x)
-ax.set_xticklabels(["original","corrected", "original","corrected"])
+ax.set_xticklabels(["original","corrected", "original","corrected", "original","corrected"])
 # ax.set_yticklabels(y_ticklabels)
 # ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
 labelsypos = -0.15
-ax.text((bar_x[0] + bar_x[1])/2, labelsypos, 'Octane', horizontalalignment="center")
-ax.text((bar_x[2] + bar_x[3])/2, labelsypos, 'Hexadecane', horizontalalignment="center")
+ax.text((bar_x[0] + bar_x[1])/2, labelsypos, 'Propane C3H8', horizontalalignment="center")
+ax.text((bar_x[2] + bar_x[3])/2, labelsypos, 'Octane C8H18', horizontalalignment="center")
+ax.text((bar_x[4] + bar_x[5])/2, labelsypos, 'Hexadecane C16H34', horizontalalignment="center")
 # ax.text((bar_x[4] + bar_x[5])/2, labelsypos, 'Hexagonal', horizontalalignment="center")
 
 ax.axhline(1.0, linestyle='dashed', linewidth=1, label="Expected", color="black")
