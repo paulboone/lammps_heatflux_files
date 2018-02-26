@@ -108,7 +108,7 @@ restart        1000000 nvt-eq.*.restart
 dump dump1 all xyz 1000000 nvt-eq.dump.*.xyz
 
 fix           NVT_eq all nvt temp ${simTemp} ${simTemp} 50
-run           200#00
+run           2000000
 unfix         NVT_eq
 undump dump1
 
@@ -167,7 +167,7 @@ restart        1000000 nve-eq.*.restart
 dump dump2 all xyz 1000000 nve-eq.dump.*.xyz
 
 fix           NVE_eq all nve
-run           300#00
+run           3000000
 unfix         NVE_eq
 undump dump2
 label after_NVE_eq
@@ -193,4 +193,4 @@ thermo         10000
 thermo_modify flush yes
 restart        1000000 nve.*.restart
 dump dump3 all xyz 1000000 nve.dump.*.xyz
-run           15000000 upto
+run           20000000 upto
