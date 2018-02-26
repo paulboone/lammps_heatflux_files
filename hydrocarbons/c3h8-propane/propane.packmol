@@ -1,0 +1,9 @@
+tolerance 2.0
+
+output propane_packed.xyz
+filetype xyz
+
+structure propane.xyz
+  number 517
+  inside box 1.0 1.0 1.0 18.38 18.38 128.22
+end structure
