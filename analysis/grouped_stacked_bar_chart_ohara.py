@@ -14,7 +14,6 @@ from utils import human_format
 rcParams.update({'figure.autolayout': True})
 
 # by row: U + K, pair, bond, angle, dihedral = 0, improper = 0
-
 rows = np.array([[45.46, 76.45, 70.15, 73.02, 70.64, 57.51],
                  [253.51, 185.87, 148.49, 134.82, 111.89, 95.89],
                  [0.00, 24.23, 27.57, 36.33, 39.94, 72.21],
@@ -56,7 +55,7 @@ ax.yaxis.grid(linestyle='-', color='0.7', zorder=0)
 ax.set_xticks(bar_x)
 ax.set_xticklabels(["CH4", "C4H10", "C8H18", "C10H22", "C16H34", "C24H50",])
 
-ax.axhline(1.0, linestyle='dashed', linewidth=1, label="Expected", color="black")
+ax.axhline(1.0, linestyle='dashed', linewidth=1, label="Expected", color="black", zorder=2)
 # ax.text(0.65/2 - 0.15, 1.0, '1.0', ha="right", va="center", weight="bold")
 
 ax.set_ylim(y_range)
