@@ -2,9 +2,9 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=8
 #SBATCH --cluster=smp
-#SBATCH --time=6-0
-#SBATCH --qos=long
-#SBATCH --job-name=c8h18-propane.lammps
+#SBATCH --time=1-0
+#SBATCH --qos=short
+#SBATCH --job-name=c3h8-propane.lammps
 #SBATCH --output=lammps-stdout.log
 
 # Load Modules
