@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 from matplotlib import rcParams
 import numpy as np
 
-from utils import human_format
+from lammps_tools.utils import human_format
 
 rcParams.update({'figure.autolayout': True})
 
