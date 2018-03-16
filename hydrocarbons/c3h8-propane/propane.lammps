@@ -50,8 +50,8 @@ angle_style     harmonic
 dihedral_style  opls # not needed for propane
 
 # see spreadsheet h1-lammps-config-units.xlsx for sources and calculations for the coefficients
-pair_coeff      1 1 0.0910 3.930 #note atom type 1 is CH2 with this data file, which is reversed from how we did Propane
-pair_coeff      2 2 0.2067 3.910 #CH3
+pair_coeff      1 1 0.0910 3.930 #CH2
+pair_coeff      2 2 0.2039 3.857 #CH3
 
 bond_coeff      1 95.883 1.54
 
@@ -179,7 +179,7 @@ print "** NVE RUN ** "
 variable cvl_xsection equal (v_bx2-v_bx1)*(v_by2-v_by1)
 variable cvl_volume equal v_cvl_xsection*6*v_zL
 
-variable e_applied equal 0.0001879
+variable e_applied equal 0.0009393
 variable J_expected equal v_e_applied/v_cvl_xsection
 
 fix source all heat 1 $(2*v_e_applied) region source
