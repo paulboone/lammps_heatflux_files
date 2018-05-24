@@ -43,9 +43,9 @@ bar_x = np.array([1,2,3.5,4.5,6,7])
 
 
 #### plot all plots
-fig = plt.figure(figsize=(8,6))
+fig = plt.figure(figsize=(4.5,3))
 fig.set_tight_layout(False)
-fig.subplots_adjust(right=0.8)
+fig.subplots_adjust(right=0.7, bottom=0.2)
 ax = fig.add_subplot(1, 1, 1)
 
 # ax.set_title("Per-term original and corrected heat fluxes for hydrocarbons", weight="bold")
@@ -54,13 +54,13 @@ ax.set_ylabel("Fraction of expected heat flux")
 
 ax.yaxis.grid(linestyle='-', color='0.7', zorder=0)
 ax.set_xticks(bar_x)
-ax.set_xticklabels(["original","corrected", "original","corrected", "original","corrected"])
+ax.set_xticklabels(["orig","corr", "orig","corr", "orig","corr"])
 # ax.set_yticklabels(y_ticklabels)
 # ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
-labelsypos = -0.15
-ax.text((bar_x[0] + bar_x[1])/2, labelsypos, 'Propane C3H8', horizontalalignment="center")
-ax.text((bar_x[2] + bar_x[3])/2, labelsypos, 'Octane C8H18', horizontalalignment="center")
-ax.text((bar_x[4] + bar_x[5])/2, labelsypos, 'Hexadecane C16H34', horizontalalignment="center")
+labelsypos = -0.20
+ax.text((bar_x[0] + bar_x[1])/2, labelsypos, 'C3H8', horizontalalignment="center")
+ax.text((bar_x[2] + bar_x[3])/2, labelsypos, 'C8H18', horizontalalignment="center")
+ax.text((bar_x[4] + bar_x[5])/2, labelsypos, 'C16H34', horizontalalignment="center")
 # ax.text((bar_x[4] + bar_x[5])/2, labelsypos, 'Hexagonal', horizontalalignment="center")
 
 ax.axhline(1.0, linestyle='dashed', linewidth=1, label="Expected", color="black")
@@ -69,7 +69,7 @@ ax.axhline(1.0, linestyle='dashed', linewidth=1, label="Expected", color="black"
 ax.set_ylim(y_range)
 # ax.set_xlim(x_range)
 
-legend_labels = ["Expected", "Convection", "Pair", "Bond", "Angle", "Dihedral", "Improper"]
+legend_labels = ["Expected", "Convection", "Pair", "Bond", "Angle", "Dihedral", ""]
 prior_vals = np.zeros(len(rows[0]))
 for i, row in enumerate(rows):
     ax.bar(bar_x, row, bar_width, color=colors[i], bottom=prior_vals, zorder=3, label=legend_labels[i+1])
@@ -79,4 +79,4 @@ ax.legend(bbox_to_anchor=(1, 1))
 # ax.legend(["Expected", None, None, "bond", "angle"], bbox_to_anchor=(1, 1))
 
 
-fig.savefig("orig_corr_hf_for_hydrocarbons.png", dpi=288)
+fig.savefig("orig_corr_hf_for_hydrocarbons_small.png", dpi=288)

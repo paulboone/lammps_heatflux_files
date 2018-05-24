@@ -42,9 +42,9 @@ bar_x = np.array([1,2,3,4,5,6])
 
 
 #### plot all plots
-fig = plt.figure(figsize=(7,5))
+fig = plt.figure(figsize=(5,3))
 fig.set_tight_layout(False)
-fig.subplots_adjust(right=0.8)
+fig.subplots_adjust(right=0.72)
 ax = fig.add_subplot(1, 1, 1)
 
 # ax.set_title("Per-term original and corrected heat fluxes for hydrocarbons", weight="bold")
@@ -71,4 +71,4 @@ ax.legend(bbox_to_anchor=(1, 1))
 # ax.legend(["Expected", None, None, "bond", "angle"], bbox_to_anchor=(1, 1))
 
 
-fig.savefig("ohara_hydrocarbons.png", dpi=288)
+fig.savefig("ohara_hydrocarbons_small.png", dpi=288)
