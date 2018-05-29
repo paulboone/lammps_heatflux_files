@@ -19,8 +19,7 @@ rows = np.array([[0.00769, 0.00769, 0.008430, 0.008430, 0.020100, 0.020100],
                  [0.05700, 0.05700, 0.048900, 0.048900, 0.035500, 0.035500],
                  [0.00378, 0.00378, 0.010200, 0.010200, 0.016300, 0.016300],
                  [0.00215, 0.00361, 0.004070, 0.010700, 0.002080, 0.012500],
-                 [0.00000, 0.00000, 0.000252, 0.007150,-0.000566, 0.009830],
-                 [0.00000, 0.00000, 0.000000, 0.000000, 0.000000, 0.000000]])
+                 [0.00000, 0.00000, 0.000252, 0.007150,-0.000566, 0.009830]])
 
 expected_hf = np.array([0.072823, 0.072823, 0.086276, 0.086276, 0.094666, 0.094666])
 
@@ -58,10 +57,11 @@ ax.set_xticklabels(["original","corrected", "original","corrected", "original","
 # ax.set_yticklabels(y_ticklabels)
 # ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
 labelsypos = -0.15
-ax.text((bar_x[0] + bar_x[1])/2, labelsypos, 'Propane C3H8', horizontalalignment="center")
-ax.text((bar_x[2] + bar_x[3])/2, labelsypos, 'Octane C8H18', horizontalalignment="center")
-ax.text((bar_x[4] + bar_x[5])/2, labelsypos, 'Hexadecane C16H34', horizontalalignment="center")
+ax.text((bar_x[0] + bar_x[1])/2, labelsypos, 'Propane $C_3H_8$', horizontalalignment="center")
+ax.text((bar_x[2] + bar_x[3])/2, labelsypos, 'Octane $C_8H_{18}$', horizontalalignment="center")
+ax.text((bar_x[4] + bar_x[5])/2, labelsypos, 'Hexadecane $C_{16}H_{34}$', horizontalalignment="center")
 # ax.text((bar_x[4] + bar_x[5])/2, labelsypos, 'Hexagonal', horizontalalignment="center")
+
 
 ax.axhline(1.0, linestyle='dashed', linewidth=1, label="Expected", color="black")
 # ax.text(0.65/2 - 0.15, 1.0, '1.0', ha="right", va="center", weight="bold")
@@ -69,7 +69,7 @@ ax.axhline(1.0, linestyle='dashed', linewidth=1, label="Expected", color="black"
 ax.set_ylim(y_range)
 # ax.set_xlim(x_range)
 
-legend_labels = ["Expected", "Convection", "Pair", "Bond", "Angle", "Dihedral", "Improper"]
+legend_labels = ["Expected", "Convection", "Pair", "Bond", "Angle", "Dihedral"]
 prior_vals = np.zeros(len(rows[0]))
 for i, row in enumerate(rows):
     ax.bar(bar_x, row, bar_width, color=colors[i], bottom=prior_vals, zorder=3, label=legend_labels[i+1])
