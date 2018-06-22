@@ -15,13 +15,16 @@ rcParams.update({'figure.autolayout': True})
 
 
 # by row: U + K, pair, bond, angle, dihedral, improper
-rows = np.array([[0.00769, 0.00769, 0.008430, 0.008430,  70.15,    0.020100, 0.020100,  70.64],
-                 [0.05700, 0.05700, 0.048900, 0.048900, 148.49,    0.035500, 0.035500, 111.89],
-                 [0.00378, 0.00378, 0.010200, 0.010200,  27.57,    0.016300, 0.016300,  39.94],
-                 [0.00215, 0.00361, 0.004070, 0.010700,  26.25,    0.002080, 0.012500,  45.23],
-                 [0.00000, 0.00000, 0.000252, 0.007150,  28.13,   -0.000566, 0.009830,  32.44]])
+rows = np.array([[0.00769, 0.00769, 0.008430, 0.008430, 0.007510, 0.007510,  70.15,    0.020100, 0.020100,  70.64],
+                 [0.05700, 0.05700, 0.048900, 0.048900, 0.047300, 0.047300, 148.49,    0.035500, 0.035500,  111.89],
+                 [0.00378, 0.00378, 0.010200, 0.010200, 0.012200, 0.012200,  27.57,    0.016300, 0.016300,   39.94],
+                 [0.00215, 0.00361, 0.004070, 0.010700, 0.005100, 0.008970,  26.25,    0.002080, 0.012500,   45.23],
+                 [0.00000, 0.00000, 0.000252, 0.007150, 0.000000, 0.000000,  28.13,   -0.000566, 0.009830,   32.44],
+                 [0.00000, 0.00000, 0.000252, 0.000000, 0.001320, 0.009750,   0.00,    0.000000, 0.000000,    0.00]])
 
-expected_hf = np.array([0.072823, 0.072823, 0.086276, 0.086276, 300, 0.094666, 0.094666, 300])
+
+
+expected_hf = np.array([0.072823, 0.072823, 0.086276, 0.086276, 0.086276, 0.086276, 300, 0.094666, 0.094666, 300])
 
 # now in fraction total expected
 rows = rows / expected_hf
@@ -37,12 +40,12 @@ num_plots = 1
 bar_width = 0.65
 bar_buffer = bar_width / 2
 bar_indices = np.arange(len(rows))
-bar_x = np.array([1,2,3.5,4.5,5.5,7,8,9])
+bar_x = np.array([1,2,3.5,4.5,5.5,6.5,7.5,9,10,11])
 
 
 
 #### plot all plots
-fig = plt.figure(figsize=(9,6))
+fig = plt.figure(figsize=(12,6))
 fig.set_tight_layout(False)
 fig.subplots_adjust(right=0.8)
 ax = fig.add_subplot(1, 1, 1)
@@ -53,13 +56,13 @@ ax.set_ylabel("Fraction of expected heat flux")
 
 ax.yaxis.grid(linestyle='-', color='0.7', zorder=0)
 ax.set_xticks(bar_x)
-ax.set_xticklabels(["original", "corrected", "original", "corrected", "Ohara", "original", "corrected", "Ohara"])
+ax.set_xticklabels(["original", "corrected", "original", "corrected", "orig-imp", "corr-imp", "Ohara", "original", "corrected", "Ohara"])
 # ax.set_yticklabels(y_ticklabels)
 # ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
 labelsypos = -0.15
 ax.text((bar_x[0] + bar_x[1])/2, labelsypos, 'Propane C3H8', horizontalalignment="center")
-ax.text((bar_x[2] + bar_x[4])/2, labelsypos, 'Octane C8H18', horizontalalignment="center")
-ax.text((bar_x[5] + bar_x[7])/2, labelsypos, 'Hexadecane C16H34', horizontalalignment="center")
+ax.text((bar_x[2] + bar_x[6])/2, labelsypos, 'Octane C8H18', horizontalalignment="center")
+ax.text((bar_x[7] + bar_x[9])/2, labelsypos, 'Hexadecane C16H34', horizontalalignment="center")
 # ax.text((bar_x[4] + bar_x[5])/2, labelsypos, 'Hexagonal', horizontalalignment="center")
 
 ax.axhline(1.0, linestyle='dashed', linewidth=1, label="Expected", color="black")
@@ -68,7 +71,7 @@ ax.axhline(1.0, linestyle='dashed', linewidth=1, label="Expected", color="black"
 ax.set_ylim(y_range)
 # ax.set_xlim(x_range)
 
-legend_labels = ["Expected", "Convection", "Pair", "Bond", "Angle", "Dihedral"]
+legend_labels = ["Expected", "Convection", "Pair", "Bond", "Angle", "Dihedral", "Improper"]
 prior_vals = np.zeros(len(rows[0]))
 for i, row in enumerate(rows):
     ax.bar(bar_x, row, bar_width, color=colors[i], bottom=prior_vals, zorder=3, label=legend_labels[i+1])
