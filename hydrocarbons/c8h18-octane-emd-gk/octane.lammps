@@ -97,11 +97,11 @@ label after_NVT_eq
 
 if "${restartAtStep} > 1" then "jump SELF after_NVE_eq"
 print "** NVE EQUILIBRATION ** "
-thermo_style custom step vol temp press density etotal v_J_cvl v_J_cvr
+thermo_style custom step vol temp press density etotal
 thermo         10000
 thermo_modify  flush yes
-restart        1000000 nve-eq.*.restart
-dump dump2 all xyz 1000000 nve-eq.dump.*.xyz
+restart        100000 nve-eq.*.restart
+dump dump2 all xyz 100000 nve-eq.dump.*.xyz
 
 fix           NVE_eq all nve
 run           100000
@@ -142,22 +142,21 @@ fix             JJTy all ave/correlate $s $p $d &
 fix             JJTz all ave/correlate $s $p $d &
                 v_Jz type auto file J0Jt_tz.dat ave running
 
-fix  J5 all ave/time $s 1 $s Jx Jy Jz file J5.out
+fix  J5 all ave/time $s 1 $s v_Jx v_Jy v_Jz file J5.out
 
 #################################################################################################
 ### NVE
 
+if "${restartAtStep} > 2" then "jump SELF after_NVE_run"
 print "** NVE RUN ** "
-if "${restartAtStep} > 1" then "jump SELF after_NVE_eq"
-print "** NVE EQUILIBRATION ** "
-thermo_style custom step vol temp press density etotal v_J_cvl v_J_cvr
+thermo_style custom step vol temp press density etotal
 thermo         10000
 thermo_modify  flush yes
 restart        1000000 nve-eq.*.restart
-dump dump2 all xyz 1000000 nve-eq.dump.*.xyz
+dump dump3 all xyz 1000000 nve-eq.dump.*.xyz
 
-fix           NVE_eq all nve
+fix nve_run all nve
 run           3000000
-unfix         NVE_eq
-undump dump2
-label after_NVE_eq
+unfix         nve_run
+undump dump3
+label after_NVE_run
