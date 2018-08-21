@@ -2,6 +2,32 @@
 
 
 
+### GREEN-KUBO ANALYSIS
+
+# to get pressure for gk analysis:
+for dir in `ls ./`; do
+  echo "$dir"
+  lmp_log_to_tsv.py $dir/output/log.lammps | tsv_stats.py -r 209 510 -c 1 timestep -c 3 temp -c 4 pressure -c 5 density
+done
+
+# to get
+mkdir -p acf_outputs
+mkdir -p acf_outputs/original
+
+for filename in `ls */output/J0Jt_*.dat`; do
+  echo "$filename => ${filename//\//-}"
+  tail -n 20000 $filename > ./acf_outputs/original/${filename//\//-}
+done
+
+mkdir -p acf_outputs/corrected
+for filename in `ls */output/J0Jti_*.dat`; do
+  echo "$filename => ${filename//\//-}"
+  tail -n 20000 $filename > ./acf_outputs/corrected/${filename//\//-}
+done
+
+# then run thermal_conductivity_via_acf.py
+
+
 # for total heat flux analysis
 lmp_avgs_to_tsv.py ./output/J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $3+$4+$5+$6+$7-4*$2-($12+$13+$14+$15+$16-4*$11), $3+$4+$8+$9+$10-$2-($12+$13+$17+$18+$19-$11);}'  | tsv_eq_trends.py -c 1 "original" -c 2 "corrected" -n 100 -s 100 | less -S
 
@@ -41,6 +67,27 @@ lmp_chunks_to_tsv.py ./run1/temps10_10K.out ./temps10_10K.out | tsv_plot_chunks.
 lmp_avgs_to_tsv.py ./output-45M/J1_10K.out ./output-90M/J1_10K.out ./output-135M/J1_10K.out ./output-142M/J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$11, $3-$12-($2-$11), $4-$13-($2-$11), $5-$14-($2-$11), $6-$15-($2-$11), $7-$16-($2-$11), $8-$17, $9-$18, $10-$19, $3+$4+$5+$6+$7-4*$2-($12+$13+$14+$15+$16-4*$11), $3+$4+$8+$9+$10-$2-($12+$13+$17+$18+$19-$11);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_a" -c 5 "CV_d" -c 6 "CV_i" -c 7 "CV_ai" -c 8 "CV_di" -c 9 "CV_ii" -c 10 "CV_o" -c 11 "CV_i" -n 2600 -s 3600 | less -S
 
 
+
+
+
+
+
+
+
+###### ARCHIVED
+
+
+
+
+
+
+
+
+
+
+
+
+
 ########## i1
 
 
@@ -54,7 +101,7 @@ lmp_avgs_to_tsv.py J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, ($10-$9)-($3
 # lmp_avgs_to_tsv.py energy10K.out | tsv_eq_trends.py -c 1 AnglePE -c 2 AllPE -c 3 AllKE --nrows 500 -s 100
 
 #angle importance 1&2
-lmp_avgs_to_tsv.py energy1.out | tsv_stats.py -c 2 AnglePE -c 3 AllPE -c 4 AllKE -r 18000000 20000000
+lmp_avgs_to_tsv.py energy1.out | tsv_stats.py -c 2 PairPE -c 3 BondPE -c 4 AnglePE -c 5 DihedralPE -c 6 ImproperPE -c 7 AllPE -c 8 AllKE -r 1 3000000
 
 
 
