@@ -1,19 +1,22 @@
 
 from glob import glob
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
 import numpy as np
 from scipy.integrate import cumtrapz, simps
 
 def average_acfs(acfpath, acf_size):
     total_acf = np.zeros((acf_size))
-    for i, acffile in enumerate(glob(acfpath)):
-        total_acf += np.loadtxt(acffile)[:,3]
 
-    print(i + 1)
-    return total_acf / (i + 1)
+    acf_files = glob(acfpath)
+    print('len: ', len(acf_files))
+    for acf_file in acf_files:
+        total_acf += np.loadtxt(acf_file)[:,3]
+        print('*')
 
+    return total_acf / len(acf_files)
 
-base_dir = "/Users/pboone/Dropbox (Personal)/Projects/LAMMPS Heat Flux Fix/LAMMPS run files/h1-hydrocarbons/c8h18-octane-emd-gk/"
+base_dir = "/Users/pboone/Dropbox (Personal)/Projects/LAMMPS Heat Flux Fix/LAMMPS run files/h1-hydrocarbons/c8h18-octane-emd-gk-72C/"
 original_acfs = base_dir + "/acf_outputs/original/*"
 corrected_acfs = base_dir + "/acf_outputs/corrected/*"
 
@@ -21,8 +24,8 @@ avg_acfso = average_acfs(original_acfs, 20000)
 avg_acfsi = average_acfs(corrected_acfs, 20000)
 
 # " V / (Kb * T^2): Volume / (boltzmann factor * temp squared)"
-temp = 401.87 # K
-volume = np.prod(-1*(np.array((-0.042139, 0.037034, -0.270039)) - (25.7979, 25.877, 172)))
+temp = 345.15 # K
+volume = np.prod(-1*(np.array((-0.042139, 0.037034, -0.270039)) - (25.797861, 25.877034, 171.999965)))
 boltzmann_const = 1.3806504e-23 # J / K
 
 kcal2j = 4186.0/6.02214e23  # kCal / mol to Joules
@@ -33,42 +36,45 @@ sample_fs = 5
 
 prefactor =  volume * convert * sample_fs / (boltzmann_const * temp**2)
 
-indices = np.arange(0,20000) / 1000 # convert to [ps]
+all_indices = np.arange(0,20000) / 1000 # convert to [ps]
 datao = avg_acfso
 datac = avg_acfsi
 
-plot_points = datao.shape[0]
-plot_points = 500
+plot_points = [500, datao.shape[0]] # 2.5ps, all data
+plot_labels = ("(A)", "(B)")
+plot_label_pos = (0.10, 0.60)
 
-indices = indices[:plot_points] * sample_fs
-integratedo = prefactor * cumtrapz(datao[:plot_points])
-integratedi = prefactor * cumtrapz(datac[:plot_points])
-# simps(datao[:plot_points])
-# simps(datac[:plot_points])
-fig = plt.figure(figsize=(5,5))
-ax = fig.add_subplot(1, 1, 1)
-ax.set_xlabel('$\\tau$ [ps]')
+rcParams.update({'figure.autolayout': True})
 
-# ax.set_ylim(0,6e-11)
-ax.set_ylabel('$\kappa$ [W / m s]')
-ax.grid(linestyle='-', color='0.7', zorder=0)
-ax.plot(indices[:-1], integratedo, zorder=2, label="original")
-ax.plot(indices[:-1], integratedi, zorder=2, label="corrected")
-ax.legend()
+fs = 7
+fsl = fs
+fig = plt.figure(figsize=(7,3), dpi=600, tight_layout=True)
 
+for plot_index in range(len(plot_points)):
+    pp = plot_points[plot_index]
+    indices = all_indices[:pp] * sample_fs
+    integratedo = prefactor * cumtrapz(datao[:pp])
+    integratedi = prefactor * cumtrapz(datac[:pp])
 
-fig.savefig("acf_thermal_conductivity_10ps.png", dpi=288)
+    print("Plot # %d" % plot_index)
+    print("uncorrected: ", prefactor * simps(datao[:pp]))
+    print("corrected: ", prefactor * simps(datac[:pp]))
 
-# ax2 = ax.twinx()
-# ax.plot(indices, datao[:plot_points] / volume, zorder=2)
-# ax.plot(indices, datac[:plot_points] / volume, zorder=2)
-# ax.set_ylabel('Heat flux auto correlation function [Kcal / mol A^2 fs]')
-# ax.set_ylim(-1e-15,10e-15)
+    ax = fig.add_subplot(1, 2, plot_index + 1)
 
+    ax.set_title(plot_labels[plot_index])
+    # fig.text(plot_label_pos[plot_index], 0.05, plot_labels[plot_index], fontsize=fsl, weight="bold")
+    ax.tick_params(axis='x', which='major', labelsize=fs)
+    ax.tick_params(axis='y', which='major', labelsize=fs)
+    ax.set_xlabel('($\\tau$ [ps]', fontsize=fsl)
 
+    ax.set_ylim(0,0.7)
+    ax.set_ylabel('$\kappa$ [W / m s]', fontsize=fsl)
+    # ax.set_xticks([0.0, 0.5, 1.0, 1.5, 2.0, 2.5])
+    ax.grid(linestyle='-', color='0.7', zorder=0)
+    ax.plot(indices[:-1], integratedo, zorder=2, label="Uncorrected LAMMPS")
+    ax.plot(indices[:-1], integratedi, zorder=2, label="Corrected")
+    ax.axhline(0.18977, linestyle='dashed', linewidth=1, label="Experimental", color="black")
+    ax.legend(fontsize=fsl)
 
-
-# ax.set_xlim(0,t_end)
-# ax.legend(['C_a'])
-# ax.set_title('Concentration vs Time' + subheader)
-# fig.savefig("conc-vs-time.png", dpi=288)
+fig.savefig("acf_thermal_conductivity.png", dpi=600)

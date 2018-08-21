@@ -42,21 +42,25 @@ bar_x = np.array([1,2,3,4,5,6])
 
 
 #### plot all plots
-fig = plt.figure(figsize=(5,3))
+fs = 7
+fsl = fs
+fig = plt.figure(figsize=(3.5,3))
 fig.set_tight_layout(False)
-fig.subplots_adjust(right=0.72)
+fig.subplots_adjust(left=0.15,right=0.95, top=0.95, bottom=0.15)
 ax = fig.add_subplot(1, 1, 1)
+ax.tick_params(axis='x', which='major', labelsize=fs)
+ax.tick_params(axis='y', which='major', labelsize=fs)
 
 # ax.set_title("Per-term original and corrected heat fluxes for hydrocarbons", weight="bold")
 ax.set_xlabel("")
-ax.set_ylabel("Fraction of expected heat flux")
+ax.set_ylabel("Fraction of applied heat flux", fontsize=fsl)
 
 ax.yaxis.grid(linestyle='-', color='0.7', zorder=0)
 ax.set_xticks(bar_x)
 ax.set_xticklabels(["$CH_4$", "$C_4H_{10}$", "$C_8H_{18}$", "$C_{10}H_{22}$", "$C_{16}H_{34}$", "$C_{24}H_{50}$",])
 
 ax.axhline(1.0, linestyle='dashed', linewidth=1, label="Expected", color="black", zorder=2)
-# ax.text(0.65/2 - 0.15, 1.0, '1.0', ha="right", va="center", weight="bold")
+# ax.text(0.65/2 - 0.15, 1.0, '1.0', ha="right", va="center", weight="bold", fontsize=fsl)
 
 ax.set_ylim(y_range)
 # ax.set_xlim(x_range)
@@ -67,8 +71,8 @@ for i, row in enumerate(rows):
     ax.bar(bar_x, row, bar_width, color=colors[i], bottom=prior_vals, zorder=3, label=legend_labels[i+1])
     prior_vals += row
 
-ax.legend(bbox_to_anchor=(1, 1))
+ax.legend(loc="best", framealpha=1.0, fontsize=fsl)
 # ax.legend(["Expected", None, None, "bond", "angle"], bbox_to_anchor=(1, 1))
 
 
-fig.savefig("ohara_hydrocarbons_small.png", dpi=288)
+fig.savefig("ohara_hydrocarbons_small.png", dpi=600)

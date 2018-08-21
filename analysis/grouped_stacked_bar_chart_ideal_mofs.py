@@ -44,24 +44,27 @@ bar_x = np.array([1,2,3.5,4.5,6,7])
 
 
 #### plot all plots
-fig = plt.figure(figsize=(8,6))
-fig.set_tight_layout(False)
-fig.subplots_adjust(right=0.8)
+fs = 7
+fsl = fs
+fig = plt.figure(figsize=(3.5,3), dpi=600, tight_layout=False)
+fig.subplots_adjust(left=0.15,right=0.95, top=0.95, bottom=0.15)
 ax = fig.add_subplot(1, 1, 1)
+ax.tick_params(axis='x', which='major', labelsize=fs)
+ax.tick_params(axis='y', which='major', labelsize=fs)
 
 # ax.set_title("Per-term original and corrected heat fluxes for idealized MOFS", weight="bold")
 ax.set_xlabel("")
-ax.set_ylabel("Fraction of expected Heat Flux")
+ax.set_ylabel("Fraction of applied heat flux", fontsize=fsl)
 
 ax.yaxis.grid(linestyle='-', color='0.7', zorder=0)
 ax.set_xticks(bar_x)
-ax.set_xticklabels(["original", "corrected", "original", "corrected", "original","corrected"])
+ax.set_xticklabels(["LAMMPS ", " w/ fix", "LAMMPS ", " w/ fix", "LAMMPS "," w/ fix"])
 # ax.set_yticklabels(y_ticklabels)
 # ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
 labelsypos = -0.15
-ax.text((bar_x[0] + bar_x[1])/2, labelsypos, 'Cubic', horizontalalignment="center")
-ax.text((bar_x[2] + bar_x[3])/2, labelsypos, 'Triangular', horizontalalignment="center")
-ax.text((bar_x[4] + bar_x[5])/2, labelsypos, 'Hexagonal', horizontalalignment="center")
+ax.text((bar_x[0] + bar_x[1])/2, labelsypos, 'Cubic', horizontalalignment="center", fontsize=fsl)
+ax.text((bar_x[2] + bar_x[3])/2, labelsypos, 'Triangular', horizontalalignment="center", fontsize=fsl)
+ax.text((bar_x[4] + bar_x[5])/2, labelsypos, 'Hexagonal', horizontalalignment="center", fontsize=fsl)
 
 ax.axhline(1.0, linestyle='dashed', linewidth=1, label="Expected", color="black")
 # ax.text(0.65/2,  0.15, 5.13e6, '5.13e06', ha="right", va="center", weight="bold")
@@ -76,8 +79,8 @@ for i, row in enumerate(rows):
     ax.bar(bar_x, row, bar_width, color=colors[i], bottom=prior_vals, zorder=3, label=legend_labels[i+1])
     prior_vals += row
 
-ax.legend(bbox_to_anchor=(1, 1))
-# ax.legend(["Expected", None, None, "bond", "angle"], bbox_to_anchor=(1, 1))
+ax.legend(loc="lower right", framealpha=1.0, fontsize=fsl) # bbox_to_anchor=(1, 1)
 
 
-fig.savefig("orig_corr_hf_for_idealized_mofs.png", dpi=288)
+
+fig.savefig("orig_corr_hf_for_idealized_mofs.png", dpi=600)
