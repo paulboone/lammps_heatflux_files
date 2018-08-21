@@ -191,7 +191,7 @@ fix source all heat 1 $(2*v_e_applied) region source
 fix sinkl all heat 1 $(-v_e_applied) region sink_l
 fix sinkr all heat 1 $(-v_e_applied) region sink_r
 
-fix heatfluxtest all nve
+fix nve all nve
 
 thermo_style custom step vol temp press density etotal v_J_cvl v_J_cvr
 thermo         10000
