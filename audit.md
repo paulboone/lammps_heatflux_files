@@ -14,7 +14,7 @@ Looks ok from 5M on... R > 0.98
 calculate per-term averages:
 
 ```bash
-lmp_avgs_to_tsv.py ./J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$9, $3-$2-($10-$9), $5-$2-($12-$9), $7-$4-($14-$11), $8-$15, $3+$5+$7-2*$4-($10+$12+$14-2*$11), $3+$5+$8-$4-($10+$12+$15-$11);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_ao" -c 5 "CV_ai" -c 6 "CV_o" -c 7 "CV_i" -n 500 -s 500 | less -S
+lmp_avgs_to_tsv.py ./J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$9, $3-$2-($10-$9), $5-$2-($12-$9), $7-$4-($14-$11), $8-$15, $3+$5+$7-2*$4-($10+$12+$14-2*$11), $3+$5+$8-$4-($10+$12+$15-$11);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_ao" -c 5 "CV_ai" -c 6 "CV_o" -c 7 "CV_i" -n 500 -s 480 | less -S
 ```
 
 < 10% fluctuations in corrected angle. OK.
@@ -31,7 +31,7 @@ Looks ok from 3M on... but using 5M+ for congruity. R > 0.99
 calculate per-term averages:
 
 ```bash
-lmp_avgs_to_tsv.py ./J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$9, $3-$2-($10-$9), $5-$2-($12-$9), $7-$4-($14-$11), $8-$15, $3+$5+$7-2*$4-($10+$12+$14-2*$11), $3+$5+$8-$4-($10+$12+$15-$11);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_ao" -c 5 "CV_ai" -c 6 "CV_o" -c 7 "CV_i" -n 500 -s 500 | less -S
+lmp_avgs_to_tsv.py ./J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$9, $3-$2-($10-$9), $5-$2-($12-$9), $7-$4-($14-$11), $8-$15, $3+$5+$7-2*$4-($10+$12+$14-2*$11), $3+$5+$8-$4-($10+$12+$15-$11);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_ao" -c 5 "CV_ai" -c 6 "CV_o" -c 7 "CV_i" -n 500 -s 480 | less -S
 ```
 
 < 2% fluctuations in corrected angle. OK.
@@ -42,12 +42,15 @@ lmp_avgs_to_tsv.py ./J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$9, $3-
 
 make sure temperature profiles are steady [same as triangle].
 
-Looks ok from 3-15M on... R > 0.99
+Looks ok from 3-15M on... but using 5M+ for congruity. R > 0.99.
+
+**IMPORTANT: we are ignoring the data from 15-20M timesteps since the framework buckles.**
+
 
 calculate per-term averages:
 
 ```bash
-lmp_avgs_to_tsv.py ./J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$9, $3-$2-($10-$9), $5-$2-($12-$9), $7-$4-($14-$11), $8-$15, $3+$5+$7-2*$4-($10+$12+$14-2*$11), $3+$5+$8-$4-($10+$12+$15-$11);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_ao" -c 5 "CV_ai" -c 6 "CV_o" -c 7 "CV_i" -n 400 -s 300 | less -S
+lmp_avgs_to_tsv.py ./J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$9, $3-$2-($10-$9), $5-$2-($12-$9), $7-$4-($14-$11), $8-$15, $3+$5+$7-2*$4-($10+$12+$14-2*$11), $3+$5+$8-$4-($10+$12+$15-$11);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_ao" -c 5 "CV_ai" -c 6 "CV_o" -c 7 "CV_i" -n 340 -s 480 | less -S
 ```
 
 < 10% fluctuations in corrected angle. OK.
@@ -75,7 +78,7 @@ lmp_chunks_to_tsv.py  ./20M/temps10_10K.out ./49M/temps10_10K.out ./75M/temps10_
 ...maybe... the first 1M timesteps isn't steady state, but it looks like it is already averaged out when you look at the 5M timestep averages.
 
 ```bash
-lmp_avgs_to_tsv.py ./20M/J1_10K.out ./49M/J1_10K.out ./75M/J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$11, $3-$12-($2-$11), $4-$13-($2-$11), $5-$14-($2-$11), $6-$15, $7-$16, $8-$17, $9-$18, $10-$19, $3+$4+$5+$6+$7-2*$2-($12+$13+$14+$15+$16-2*$11), $3+$4+$8+$9+$10-$2-($12+$13+$17+$18+$19-$11);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_a" -c 5 "CV_d" -c 6 "CV_i" -c 7 "CV_ai" -c 8 "CV_di" -c 9 "CV_ii" -c 10 "CV_orig" -c 11 "CV_corr" -n 2200 -s 300 | less -S
+lmp_avgs_to_tsv.py ./20M/J1_10K.out ./49M/J1_10K.out ./75M/J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$11, $3-$12-($2-$11), $4-$13-($2-$11), $5-$14-($2-$11), $6-$15, $7-$16, $8-$17, $9-$18, $10-$19, $3+$4+$5+$6+$7-2*$2-($12+$13+$14+$15+$16-2*$11), $3+$4+$8+$9+$10-$2-($12+$13+$17+$18+$19-$11);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_a" -c 5 "CV_d" -c 6 "CV_i" -c 7 "CV_ai" -c 8 "CV_di" -c 9 "CV_ii" -c 10 "CV_orig" -c 11 "CV_corr" -n 2150 -s 800 | less -S
 ```
 
 Note modifications to eliminate out the dihedral and improper terms. Corrected angle looks to be within 2%.
@@ -99,10 +102,10 @@ lmp_chunks_to_tsv.py  ./output-45M/temps10_10K.out | tsv_plot_chunks.py -o temps
 First temperature profile at 5M timesteps looks indistinguishable from the rest.
 
 ```bash
-lmp_avgs_to_tsv.py ./output-45M/J1_10K.out ./output-90M/J1_10K.out ./output-135M/J1_10K.out ./output-142M/J1_10K.out |  awk 'BEGIN {OFS = "\t"}; {print $1, $2-$11, $3-$12-($2-$11), $4-$13-($2-$11), $5-$14-($2-$11), $6-$15-($2-$11), $7-$16-($2-$11), $8-$17, $9-$18, $10-$19, $3+$4+$5+$6+$7-4*$2-($12+$13+$14+$15+$16-4*$11), $3+$4+$8+$9+$10-$2-($12+$13+$17+$18+$19-$11);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_a" -c 5 "CV_d" -c 6 "CV_i" -c 7 "CV_ai" -c 8 "CV_di" -c 9 "CV_ii" -c 10 "CV_orig" -c 11 "CV_corr" -n 4500 -s 300 | less -S
+ ./output-45M/J1_10K.out ./output-90M/J1_10K.out ./output-135M/J1_10K.out ./output-142M/J1_10K.out |  awk 'BEGIN {OFS = "\t"}; {print $1, $2-$11, $3-$12-($2-$11), $4-$13-($2-$11), $5-$14-($2-$11), $6-$15-($2-$11), $7-$16-($2-$11), $8-$17, $9-$18, $10-$19, $3+$4+$5+$6+$7-4*$2-($12+$13+$14+$15+$16-4*$11), $3+$4+$8+$9+$10-$2-($12+$13+$17+$18+$19-$11);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_a" -c 5 "CV_d" -c 6 "CV_i" -c 7 "CV_ai" -c 8 "CV_di" -c 9 "CV_ii" -c 10 "CV_orig" -c 11 "CV_corr" -n 4400 -s 800 | less -S
 ```
 
-On 27M rows averaged, angle is within 6%, dihedral is within 10%.
+On 44M rows averaged, angle is within 20%, dihedral is within 10%.
 
 
 
@@ -126,19 +129,10 @@ lmp_chunks_to_tsv.py  ./output-45M/temps10_10K.out | tsv_plot_chunks.py -o temps
 
 
 ```bash
-lmp_avgs_to_tsv.py ./output-45M/J1_10K.out ./output-90M/J1_10K.out ./output-135M/J1_10K.out ./output-142M/J1_10K.out ./output-180M/J1_10K.out ./output-200M/J1_10K.out ./output-245M/J1_10K.out  | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$11, $3-$12-($2-$11), $4-$13-($2-$11), $5-$14-($2-$11), $6-$15-($2-$11), $7-$16-($2-$11), $8-$17, $9-$18, $10-$19, $3+$4+$5+$6+$7-4*$2-($12+$13+$14+$15+$16-4*$11), $3+$4+$8+$9+$10-$2-($12+$13+$17+$18+$19-$11);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_a" -c 5 "CV_d" -c 6 "CV_i" -c 7 "CV_ai" -c 8 "CV_di" -c 9 "CV_ii" -c 10 "CV_o" -c 11 "CV_i" -n 4900 -s 300 | less -S
+lmp_avgs_to_tsv.py ./output-45M/J1_10K.out ./output-90M/J1_10K.out ./output-135M/J1_10K.out ./output-180M/J1_10K.out ./output-200M/J1_10K.out ./output-245M/J1_10K.out  | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$11, $3-$12-($2-$11), $4-$13-($2-$11), $5-$14-($2-$11), $6-$15-($2-$11), $7-$16-($2-$11), $8-$17, $9-$18, $10-$19, $3+$4+$5+$6+$7-4*$2-($12+$13+$14+$15+$16-4*$11), $3+$4+$8+$9+$10-$2-($12+$13+$17+$18+$19-$11);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_a" -c 5 "CV_d" -c 6 "CV_i" -c 7 "CV_ai" -c 8 "CV_di" -c 9 "CV_ii" -c 10 "CV_o" -c 11 "CV_i" -n 7800 -s 800 | less -S
 ```
 
-The first set of data shows an anomalously low value for the improved angle, but it doesn't occur until the range 41-47M timesteps:
-
-```bash
-lmp_avgs_to_tsv.py ./output-45M/J1_10K.out ./output-90M/J1_10K.out  | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$11, $3-$12-($2-$11), $4-$13-($2-$11), $5-$14-($2-$11), $6-$15-($2-$11), $7-$16-($2-$11), $8-$17, $9-$18, $10-$19, $3+$4+$5+$6+$7-4*$2-($12+$13+$14+$15+$16-4*$11), $3+$4+$8+$9+$10-$2-($12+$13+$17+$18+$19-$11);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_a" -c 5 "CV_d" -c 6 "CV_i" -c 7 "CV_ai" -c 8 "CV_di" -c 9 "CV_ii" -c 10 "CV_o" -c 11 "CV_i" -n 300 -s 3300 | less -S
-```
-
-So I think we can assume that is natural random fluctuation and not a sign we haven't reached steady-state.
-
-
-
+Much greater swings here of around 35% for angle and 31% for dihedral indicate we could run this for longer to get better results.
 
 
 ## Green-Kubo analysis
