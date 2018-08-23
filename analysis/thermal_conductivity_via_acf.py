@@ -77,4 +77,4 @@ for plot_index in range(len(plot_points)):
     ax.axhline(0.18977, linestyle='dashed', linewidth=1, label="Experimental", color="black")
     ax.legend(fontsize=fsl)
 
-fig.savefig("acf_thermal_conductivity.png", dpi=600)
+fig.savefig("acf_thermal_conductivity.png", dpi=300)

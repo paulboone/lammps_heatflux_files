@@ -85,4 +85,4 @@ ax.legend(loc=(0.05, 0.14), framealpha=1.0, fontsize=fsl)
 # ax.legend(["Expected", None, None, "bond", "angle"], bbox_to_anchor=(1, 1))
 
 
-fig.savefig("orig_corr_hf_for_impropers.png", dpi=600)
+fig.savefig("orig_corr_hf_for_impropers.png", dpi=300)

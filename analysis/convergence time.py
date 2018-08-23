@@ -45,4 +45,4 @@ ax.axvspan(0,3, color="0.9", label='No applied heat flux')
 legend_labels = ["Applied heat flux", "Uncorrected LAMMPS", "Corrected LAMMPS"]
 legend = ax.legend(legend_labels, framealpha=1.0, fontsize=fsl)
 
-fig.savefig("total_heat_flux_convergence_100.png", dpi=600)
+fig.savefig("total_heat_flux_convergence_100.png", dpi=300)

@@ -75,4 +75,4 @@ ax.legend(loc="best", framealpha=1.0, fontsize=fsl)
 # ax.legend(["Expected", None, None, "bond", "angle"], bbox_to_anchor=(1, 1))
 
 
-fig.savefig("ohara_hydrocarbons_small.png", dpi=600)
+fig.savefig("ohara_hydrocarbons_small.png", dpi=300)

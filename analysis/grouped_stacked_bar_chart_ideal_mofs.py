@@ -83,4 +83,4 @@ ax.legend(loc="lower right", framealpha=1.0, fontsize=fsl) # bbox_to_anchor=(1, 
 
 
 
-fig.savefig("orig_corr_hf_for_idealized_mofs.png", dpi=600)
+fig.savefig("orig_corr_hf_for_idealized_mofs.png", dpi=300)
