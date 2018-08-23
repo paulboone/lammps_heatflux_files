@@ -9,6 +9,7 @@ from matplotlib import pyplot as plt
 from matplotlib import rcParams
 import numpy as np
 
+from analysis.utils import save_figure_as_tiff
 from lammps_tools.utils import human_format
 
 rcParams.update({'figure.autolayout': True})
@@ -74,5 +75,4 @@ for i, row in enumerate(rows):
 ax.legend(loc="best", framealpha=1.0, fontsize=fsl)
 # ax.legend(["Expected", None, None, "bond", "angle"], bbox_to_anchor=(1, 1))
 
-
-fig.savefig("ohara_hydrocarbons_small.png", dpi=300)
+save_figure_as_tiff(fig, "figures/ohara_hydrocarbons_small.tif", dpi=300)

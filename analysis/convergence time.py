@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from analysis.utils import save_figure_as_tiff
+
 rows_to_avg = 100
 expected_heat_flux = -0.086276
 
@@ -45,4 +47,8 @@ ax.axvspan(0,3, color="0.9", label='No applied heat flux')
 legend_labels = ["Applied heat flux", "Uncorrected LAMMPS", "Corrected LAMMPS"]
 legend = ax.legend(legend_labels, framealpha=1.0, fontsize=fsl)
 
-fig.savefig("total_heat_flux_convergence_100.png", dpi=300)
+save_figure_as_tiff(fig, "figures/total_heat_flux_convergence_100.tif", dpi=300)
+
+
+
+# fig.savefig("total_heat_flux_convergence_100.png", dpi=300)

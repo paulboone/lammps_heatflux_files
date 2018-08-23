@@ -5,6 +5,8 @@ from matplotlib import rcParams
 import numpy as np
 from scipy.integrate import cumtrapz, simps
 
+from analysis.utils import save_figure_as_tiff
+
 def average_acfs(acfpath, acf_size):
     total_acf = np.zeros((acf_size))
 
@@ -77,4 +79,4 @@ for plot_index in range(len(plot_points)):
     ax.axhline(0.18977, linestyle='dashed', linewidth=1, label="Experimental", color="black")
     ax.legend(fontsize=fsl)
 
-fig.savefig("acf_thermal_conductivity.png", dpi=300)
+save_figure_as_tiff(fig, "figures/acf_thermal_conductivity.tif", dpi=300)
