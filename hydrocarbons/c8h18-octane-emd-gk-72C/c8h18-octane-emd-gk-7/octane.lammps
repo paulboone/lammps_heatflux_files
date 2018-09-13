@@ -127,7 +127,7 @@ compute         Ja    all heat/flux KE PE STRESS_a
 compute         Jd    all heat/flux KE PE STRESS_d
 compute         Jadi   all heat/flux_improved_atom angle dihedral
 
-variable        Jx equal (c_Jp[1]+c_Jb[1]+c_Ja[1]+c_Jd[1]-3*c_Jp[3])/vol
+variable        Jx equal (c_Jp[1]+c_Jb[1]+c_Ja[1]+c_Jd[1]-3*c_Jp[4])/vol
 variable        Jy equal (c_Jp[2]+c_Jb[2]+c_Ja[2]+c_Jd[2]-3*c_Jp[5])/vol
 variable        Jz equal (c_Jp[3]+c_Jb[3]+c_Ja[3]+c_Jd[3]-3*c_Jp[6])/vol
 
