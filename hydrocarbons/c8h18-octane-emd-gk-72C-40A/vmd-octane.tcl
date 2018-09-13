@@ -21,7 +21,7 @@ topo guessangles
 topo guessdihedrals
 mol reanalyze top
 
-pbc set {25.84 25.84 25.84 90.0 90.0 90.0}
+pbc set {40.0 40.0 40.0 90.0 90.0 90.0}
 topo writelammpsdata octane.data full
 
 exit 0
