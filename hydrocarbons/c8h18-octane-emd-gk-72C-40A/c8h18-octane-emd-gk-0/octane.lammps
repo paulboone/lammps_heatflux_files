@@ -1,0 +1,179 @@
+#################################################################################################
+# to restart, use -var restart <stage> <restart_filename>
+# stages:
+# - 0: start at beginning
+# - 1: start after NVT equilibration
+# - 2: start after NVE equilibration
+
+variable restart index 0 'nothing'
+variable        restartAtStep equal ${restart}
+next restart
+variable        restartFileName string ${restart}
+print "Restart at step: ${restartAtStep} "
+print "Restart filename: ${restartFileName} "
+
+
+variable        initialDataFile string octane.data
+variable        simTemp equal 345.15
+
+variable quenchTemp equal ${simTemp} # change if want to quench
+
+units           real
+atom_style      full
+dimension       3
+boundary        p p p
+
+neighbor        2 bin  # default
+neigh_modify    every 1 delay 3 check yes
+
+if "${restartAtStep} > 0" then &
+    "read_restart    ${restartFileName}" &
+    "jump SELF after_load_data"
+
+label load_data
+read_data       ${initialDataFile}
+velocity        all create ${simTemp} 123123 dist uniform
+
+label after_load_data
+
+timestep        1.0
+
+#################################################################################################
+### use NERD force field
+# Nath, S. K., Escobedo, F. A. & de Pablo, J. J. On the simulation of vapor–liquid equilibria for alkanes. The Journal of Chemical Physics 108, 9905–9911 (1998).
+pair_style      lj/cut 13.8
+pair_modify     mix geometric tail yes
+bond_style      harmonic
+angle_style     harmonic
+dihedral_style  opls # not needed for propane
+
+# see spreadsheet h1-lammps-config-units.xlsx for sources and calculations for the coefficients
+pair_coeff      1 1 0.0910 3.930 #note atom type 1 is CH2 with this data file, which is reversed from how we did Propane
+pair_coeff      2 2 0.2067 3.910 #CH3
+
+bond_coeff      1 95.883 1.54
+
+angle_coeff     1 62.100 114
+angle_coeff     2 62.100 114
+
+dihedral_coeff  1 1.411 -0.2710 3.145 0
+dihedral_coeff  2 1.411 -0.2710 3.145 0
+special_bonds   lj 0.0 0.0 0.0
+
+#################################################################################################
+### output for calculating angle importance
+compute PE_TOT_PAIR all pair lj/cut
+compute PE_TOT_BOND all pe bond
+compute PE_TOT_ANGLE all pe angle
+compute PE_TOT_DIHEDRAL all pe dihedral
+compute PE_TOT_IMPROPER all pe improper
+compute PE_TOT_ALL all pe
+compute KE_TOT all ke
+fix  PE10 all ave/time 1  10000  10000 c_PE_TOT_PAIR c_PE_TOT_BOND c_PE_TOT_ANGLE c_PE_TOT_DIHEDRAL c_PE_TOT_IMPROPER c_PE_TOT_ALL c_KE_TOT file energy10K.out
+
+# per timestep output for calculating angle importance via fluctuations
+# fix  PE1 all ave/time 1  1  1 c_PE_TOT_PAIR c_PE_TOT_BOND c_PE_TOT_ANGLE c_PE_TOT_DIHEDRAL c_PE_TOT_IMPROPER c_PE_TOT_ALL c_KE_TOT file energy1.out
+
+#################################################################################################
+### NVT equilibration
+if "${restartAtStep} > 0" then "jump SELF after_NVT_eq"
+print "** NVT EQUILIBRATION ** "
+thermo_style custom step vol temp press density etotal
+thermo         10000
+thermo_modify  flush yes
+restart        1000000 nvt-eq.*.restart
+dump dump1 all xyz 1000000 nvt-eq.dump.*.xyz
+
+fix           NVT_eq all nvt temp ${simTemp} ${simTemp} 50
+run           2000000
+unfix         NVT_eq
+undump dump1
+
+
+label after_NVT_eq
+
+#################################################################################################
+### NVE equilibration
+
+if "${restartAtStep} > 1" then "jump SELF after_NVE_eq"
+print "** NVE EQUILIBRATION ** "
+thermo_style custom step vol temp press density etotal
+thermo         10000
+thermo_modify  flush yes
+restart        100000 nve-eq.*.restart
+dump dump2 all xyz 100000 nve-eq.dump.*.xyz
+
+fix           NVE_eq all nve
+run           100000
+unfix         NVE_eq
+undump dump2
+label after_NVE_eq
+
+
+#################################################################################################
+### heat flux computes and outputs
+
+compute PE         all pe/atom
+compute KE         all ke/atom
+compute STRESS_p   all stress/atom NULL pair
+compute STRESS_b   all stress/atom NULL bond
+compute STRESS_a   all stress/atom NULL angle
+compute STRESS_d   all stress/atom NULL dihedral
+compute STRESS_i   all stress/atom NULL improper
+
+compute         Jp    all heat/flux KE PE STRESS_p
+compute         Jb    all heat/flux KE PE STRESS_b
+compute         Ja    all heat/flux KE PE STRESS_a
+compute         Jd    all heat/flux KE PE STRESS_d
+compute         Jadi   all heat/flux_improved_atom angle dihedral
+
+variable        Jx equal (c_Jp[1]+c_Jb[1]+c_Ja[1]+c_Jd[1]-3*c_Jp[4])/vol
+variable        Jy equal (c_Jp[2]+c_Jb[2]+c_Ja[2]+c_Jd[2]-3*c_Jp[5])/vol
+variable        Jz equal (c_Jp[3]+c_Jb[3]+c_Ja[3]+c_Jd[3]-3*c_Jp[6])/vol
+
+variable        Jxi equal (c_Jp[1]+c_Jb[1]+c_Jadi[1]-c_Jp[4])/vol
+variable        Jyi equal (c_Jp[2]+c_Jb[2]+c_Jadi[2]-c_Jp[5])/vol
+variable        Jzi equal (c_Jp[3]+c_Jb[3]+c_Jadi[3]-c_Jp[6])/vol
+
+variable        p equal 20000     # correlation length
+variable        s equal 5      # sample interval
+variable        d equal $p*$s   # dump interval
+
+fix             JJTx all ave/correlate $s $p $d &
+                v_Jx type auto file J0Jt_tx.dat ave running
+
+fix             JJTy all ave/correlate $s $p $d &
+                v_Jy type auto file J0Jt_ty.dat ave running
+
+fix             JJTz all ave/correlate $s $p $d &
+                v_Jz type auto file J0Jt_tz.dat ave running
+
+fix  J5 all ave/time $s 1 $s v_Jx v_Jy v_Jz file J5.out
+
+fix             JJTxi all ave/correlate $s $p $d &
+                v_Jxi type auto file J0Jti_tx.dat ave running
+
+fix             JJTyi all ave/correlate $s $p $d &
+                v_Jyi type auto file J0Jti_ty.dat ave running
+
+fix             JJTzi all ave/correlate $s $p $d &
+                v_Jzi type auto file J0Jti_tz.dat ave running
+
+fix  J5i all ave/time $s 1 $s v_Jxi v_Jyi v_Jzi file J5i.out
+
+#################################################################################################
+### NVE
+
+if "${restartAtStep} > 2" then "jump SELF after_NVE_run"
+print "** NVE RUN ** "
+thermo_style custom step vol temp press density etotal
+thermo         10000
+thermo_modify  flush yes
+restart        1000000 nve-eq.*.restart
+dump dump3 all xyz 1000000 nve-eq.dump.*.xyz
+
+fix nve_run all nve
+run           3000000
+unfix         nve_run
+undump dump3
+label after_NVE_run
