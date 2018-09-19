@@ -146,7 +146,8 @@ for dir in `ls ./`; do
 done
 ```
 
-to create input files for thermal_conductivity_via_acf.py script:
+to create input files for thermal_conductivity_via_acf.py script (the tail just eliminates the header)
+from the file):
 
 ```bash
 mkdir -p acf_outputs
@@ -163,5 +164,14 @@ for filename in `ls */output/J0Jti_*.dat`; do
   tail -n 20000 $filename > ./acf_outputs/corrected/${filename//\//-}
 done
 ```
+to verify that the top and bottom are both chosen correctly
+```bash
+for filename in `ls */output/J0Jt_*.dat`; do
+  echo "$filename => ${filename//\//-}"
+  tail -n 20000 $filename | head -n 3
+  tail -n 20000 $filename | tail -n 3
+done
+```
+
 
 then run thermal_conductivity_via_acf.py
