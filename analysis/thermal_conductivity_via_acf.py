@@ -1,11 +1,35 @@
 
 from glob import glob
+from os.path import basename
+
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 import numpy as np
 from scipy.integrate import cumtrapz, simps
 
 from analysis.utils import save_figure_as_tiff
+
+def all_acfs(acfpath, acf_size):
+
+    acf_files = list(glob(acfpath))
+    acf_files.sort()
+    if len(acf_files) % 3 != 0:
+        raise Exception("ERROR: # of acf files should be a multiple of 3")
+
+    print('len: ', len(acf_files))
+    acfs = np.zeros((len(acf_files) // 3, acf_size))
+    one_traj_acfs = np.zeros((3,acf_size))
+    for i in range(0,len(acf_files) // 3):
+
+        one_traj_acfs[0] = np.loadtxt(acf_files[i*3])[:,3]
+        one_traj_acfs[1] = np.loadtxt(acf_files[i*3 + 1])[:,3]
+        one_traj_acfs[2] = np.loadtxt(acf_files[i*3 + 2])[:,3]
+        acfs[i] = np.average(one_traj_acfs, axis=0)
+        print("averaging: %s, %s, %s" % (   basename(acf_files[i*3]),
+                                            basename(acf_files[i*3 + 1]),
+                                            basename(acf_files[i*3 + 2])))
+        print('***')
+    return acfs
 
 def average_acfs(acfpath, acf_size):
     total_acf = np.zeros((acf_size))
@@ -19,11 +43,15 @@ def average_acfs(acfpath, acf_size):
     return total_acf / len(acf_files)
 
 base_dir = "/Users/pboone/Dropbox (Personal)/Projects/LAMMPS Heat Flux Fix/LAMMPS run files/h1-hydrocarbons/c8h18-octane-emd-gk-72C/"
-original_acfs = base_dir + "/acf_outputs/original/*"
-corrected_acfs = base_dir + "/acf_outputs/corrected/*"
+original_acfs = base_dir + "/acf_outputs/original/*.dat"
+corrected_acfs = base_dir + "/acf_outputs/corrected/*.dat"
 
-avg_acfso = average_acfs(original_acfs, 20000)
-avg_acfsi = average_acfs(corrected_acfs, 20000)
+orig_acfs = all_acfs(original_acfs, 20000)
+corr_acfs = all_acfs(corrected_acfs, 20000)
+
+avg_acfso = np.average(orig_acfs, axis=0)
+avg_acfsi = np.average(corr_acfs, axis=0)
+
 
 # " V / (Kb * T^2): Volume / (boltzmann factor * temp squared)"
 temp = 345.15 # K
@@ -65,18 +93,26 @@ for plot_index in range(len(plot_points)):
     ax = fig.add_subplot(1, 2, plot_index + 1)
 
     ax.set_title(plot_labels[plot_index])
-    # fig.text(plot_label_pos[plot_index], 0.05, plot_labels[plot_index], fontsize=fsl, weight="bold")
     ax.tick_params(axis='x', which='major', labelsize=fs)
     ax.tick_params(axis='y', which='major', labelsize=fs)
     ax.set_xlabel('($\\tau$ [ps]', fontsize=fsl)
 
-    ax.set_ylim(0,0.7)
-    ax.set_ylabel('$\kappa$ [W / m s]', fontsize=fsl)
+    ax.set_ylabel('$\kappa$ [W / m K]', fontsize=fsl)
     # ax.set_xticks([0.0, 0.5, 1.0, 1.5, 2.0, 2.5])
     ax.grid(linestyle='-', color='0.7', zorder=0)
     ax.plot(indices[:-1], integratedo, zorder=2, label="Uncorrected LAMMPS")
     ax.plot(indices[:-1], integratedi, zorder=2, label="Corrected")
-    ax.axhline(0.18977, linestyle='dashed', linewidth=1, label="Experimental", color="black")
+    for i, one_traj_acf in enumerate(corr_acfs):
+        int_one_traj = prefactor * cumtrapz(one_traj_acf[:pp])
+        label = "Unaveraged corrected simulations" if i==0 else None
+        ax.plot(indices[:-1], int_one_traj, zorder=0, color="#FFBC75", lw=0.5, label=label)
+
+    for i, one_traj_acf in enumerate(orig_acfs):
+        int_one_traj = prefactor * cumtrapz(one_traj_acf[:pp])
+        label = "Unaveraged uncorrected simulations" if i==0 else None
+        ax.plot(indices[:-1], int_one_traj, zorder=1, color="#AFC2FA", lw=0.5, label=label)
+
+    ax.axhline(experimental_k / 1000, linestyle='dashed', linewidth=1, label="Experimental", color="black")
     ax.legend(fontsize=fsl)
 
-save_figure_as_tiff(fig, "figures/acf_thermal_conductivity.tif", dpi=300)
+save_figure_as_tiff(fig, "figures/acf_thermal_conductivity_two_ranges.tif", dpi=300)
