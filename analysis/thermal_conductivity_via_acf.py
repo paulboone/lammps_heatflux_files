@@ -46,6 +46,21 @@ base_dir = "/Users/pboone/Dropbox (Personal)/Projects/LAMMPS Heat Flux Fix/LAMMP
 original_acfs = base_dir + "/acf_outputs/original/*.dat"
 corrected_acfs = base_dir + "/acf_outputs/corrected/*.dat"
 
+# plot_points = [1400, 8000] # 2.5ps, all data datao.shape[0]
+plot_points = [1400, datao.shape[0]] # 2.5ps, all data
+
+## 25.84 angstrom box
+# volume = 25.84 ** 3
+# temp = 344.96 # K
+# experimental_k = 185.46
+
+## 40 angstrom box
+volume = 40.00 ** 3
+temp = 345.17 # K
+experimental_k = 187.47
+
+
+
 orig_acfs = all_acfs(original_acfs, 20000)
 corr_acfs = all_acfs(corrected_acfs, 20000)
 
@@ -53,9 +68,6 @@ avg_acfso = np.average(orig_acfs, axis=0)
 avg_acfsi = np.average(corr_acfs, axis=0)
 
 
-# " V / (Kb * T^2): Volume / (boltzmann factor * temp squared)"
-temp = 345.15 # K
-volume = np.prod(-1*(np.array((-0.042139, 0.037034, -0.270039)) - (25.797861, 25.877034, 171.999965)))
 boltzmann_const = 1.3806504e-23 # J / K
 
 kcal2j = 4186.0/6.02214e23  # kCal / mol to Joules
@@ -66,11 +78,29 @@ sample_fs = 5
 
 prefactor =  volume * convert * sample_fs / (boltzmann_const * temp**2)
 
-all_indices = np.arange(0,20000) / 1000 # convert to [ps]
+all_indices = np.arange(0, 20000) / 1000 # convert to [ps]
 datao = avg_acfso
 datac = avg_acfsi
 
-plot_points = [500, datao.shape[0]] # 2.5ps, all data
+##### print ACF plot
+fig = plt.figure(figsize=(7,7))
+ax = fig.add_subplot(1, 1, 1)
+ax.set_xlabel('t [ps]')
+ax.set_ylabel('ACF')
+ax.grid(linestyle='-', color='0.7', zorder=0)
+ax.set_ylim(-1e-10,1e-10)
+
+
+for i, one_traj_acf in enumerate(orig_acfs):
+    label = "Unaveraged corrected simulations" if i==0 else None
+    ax.plot(all_indices, one_traj_acf, zorder=0, color="#FFBC75", lw=0.2, label=label)
+for i, one_traj_acf in enumerate(corr_acfs):
+    label = "Unaveraged corrected simulations" if i==0 else None
+    ax.plot(indices, one_traj_acf, zorder=0, color="#AFC2FA", lw=0.2, label=label)
+
+save_figure_as_tiff(fig, "figures/acf_plot.tif", dpi=300)
+
+##### print thermal conductivity plot (two ranges)
 plot_labels = ("(A)", "(B)")
 plot_label_pos = (0.10, 0.60)
 
