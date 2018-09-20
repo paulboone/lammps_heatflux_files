@@ -46,9 +46,6 @@ base_dir = "/Users/pboone/Dropbox (Personal)/Projects/LAMMPS Heat Flux Fix/LAMMP
 original_acfs = base_dir + "/acf_outputs/original/*.dat"
 corrected_acfs = base_dir + "/acf_outputs/corrected/*.dat"
 
-# plot_points = [1400, 8000] # 2.5ps, all data datao.shape[0]
-plot_points = [1400, datao.shape[0]] # 2.5ps, all data
-
 ## 25.84 angstrom box
 # volume = 25.84 ** 3
 # temp = 344.96 # K
@@ -59,10 +56,13 @@ volume = 40.00 ** 3
 temp = 345.17 # K
 experimental_k = 187.47
 
+## 40 angstrom box 5t
+volume = 40.00 ** 3
+temp = 347.25 # K
+experimental_k = 187.90
 
-
-orig_acfs = all_acfs(original_acfs, 20000)
-corr_acfs = all_acfs(corrected_acfs, 20000)
+orig_acfs = all_acfs(original_acfs, 100000)
+corr_acfs = all_acfs(corrected_acfs, 100000)
 
 avg_acfso = np.average(orig_acfs, axis=0)
 avg_acfsi = np.average(corr_acfs, axis=0)
@@ -78,27 +78,49 @@ sample_fs = 5
 
 prefactor =  volume * convert * sample_fs / (boltzmann_const * temp**2)
 
-all_indices = np.arange(0, 20000) / 1000 # convert to [ps]
+all_indices = np.arange(0, 100000) / 1000 # convert to [ps]
 datao = avg_acfso
 datac = avg_acfsi
 
-##### print ACF plot
+# plot_points = [1400, 8000] # 2.5ps, all data datao.shape[0]
+plot_points = [1400, datao.shape[0]] # 7ps, all data
+
+
+##### print ACF plots
 fig = plt.figure(figsize=(7,7))
 ax = fig.add_subplot(1, 1, 1)
 ax.set_xlabel('t [ps]')
 ax.set_ylabel('ACF')
 ax.grid(linestyle='-', color='0.7', zorder=0)
-ax.set_ylim(-1e-10,1e-10)
 
+ax.set_xlim(0,2)
 
-for i, one_traj_acf in enumerate(orig_acfs):
-    label = "Unaveraged corrected simulations" if i==0 else None
-    ax.plot(all_indices, one_traj_acf, zorder=0, color="#FFBC75", lw=0.2, label=label)
-for i, one_traj_acf in enumerate(corr_acfs):
-    label = "Unaveraged corrected simulations" if i==0 else None
-    ax.plot(indices, one_traj_acf, zorder=0, color="#AFC2FA", lw=0.2, label=label)
+normalized_acfso = avg_acfso / avg_acfso[0]
+normalized_acfsi = avg_acfsi / avg_acfsi[0]
 
-save_figure_as_tiff(fig, "figures/acf_plot.tif", dpi=300)
+ax.plot(all_indices, normalized_acfso, zorder=0, color="#FFBC75", lw=2, label="Original")
+ax.plot(all_indices, normalized_acfsi, zorder=1, color="#AFC2FA", lw=2, label="Corrected")
+
+save_figure_as_tiff(fig, "figures/acf_plot_0-2.tif", dpi=300)
+
+fig = plt.figure(figsize=(7,7))
+ax = fig.add_subplot(1, 1, 1)
+ax.set_xlabel('t [ps]')
+ax.set_ylabel('ACF')
+ax.grid(linestyle='-', color='0.7', zorder=0)
+
+normalized_acfso = np.average(avg_acfso.reshape((100,1000)), axis=-1)
+normalized_acfso /= normalized_acfso[0]
+
+normalized_acfsi = np.average(avg_acfsi.reshape((100,1000)), axis=-1)
+normalized_acfsi /= normalized_acfsi[0]
+
+normalized_indices = np.average(all_indices.reshape((100,1000)), axis=-1) * sample_fs
+
+ax.plot(normalized_indices, normalized_acfso, zorder=0, color="#FFBC75", lw=2, label="Original")
+ax.plot(normalized_indices, normalized_acfsi, zorder=1, color="#AFC2FA", lw=2, label="Corrected")
+
+save_figure_as_tiff(fig, "figures/acf_plot_0-end.tif", dpi=300)
 
 ##### print thermal conductivity plot (two ranges)
 plot_labels = ("(A)", "(B)")
@@ -108,7 +130,7 @@ rcParams.update({'figure.autolayout': True})
 
 fs = 7
 fsl = fs
-fig = plt.figure(figsize=(7,3), dpi=600, tight_layout=True)
+fig = plt.figure(figsize=(7,3), dpi=300, tight_layout=True)
 
 for plot_index in range(len(plot_points)):
     pp = plot_points[plot_index]
