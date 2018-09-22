@@ -32,7 +32,7 @@ if "${restartAtStep} > 0" then &
 
 label load_data
 read_data       ${initialDataFile}
-velocity        all create ${simTemp} 261019714935 dist uniform
+velocity        all create ${simTemp} 267600854 dist uniform
 
 label after_load_data
 
