@@ -1,0 +1,9 @@
+tolerance 2.0
+
+output octane_packed.xyz
+filetype xyz
+
+structure octane.xyz
+  number 479
+  inside box 1.0 1.0 1.0 24.84 24.84 171.27
+end structure
