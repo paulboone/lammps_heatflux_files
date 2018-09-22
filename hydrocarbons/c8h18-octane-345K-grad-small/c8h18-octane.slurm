@@ -4,7 +4,7 @@
 #SBATCH --cluster=smp
 #SBATCH --time=6-0
 #SBATCH --qos=long
-#SBATCH --job-name=c8h18-octane.lammps
+#SBATCH --job-name=c8h18-octane-345K-grad-small.lammps
 #SBATCH --output=lammps-stdout.log
 
 # Load Modules

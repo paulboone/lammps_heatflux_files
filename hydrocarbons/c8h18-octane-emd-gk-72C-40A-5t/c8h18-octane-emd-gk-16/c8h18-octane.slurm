@@ -4,7 +4,7 @@
 #SBATCH --cluster=smp
 #SBATCH --time=6-0
 #SBATCH --qos=long
-#SBATCH --job-name=c8h18-octane-emd-gk.lammps-6-40A
+#SBATCH --job-name=c8h18-octane-emd-gk.lammps-16-40A
 #SBATCH --output=lammps-stdout.log
 
 # Load Modules
