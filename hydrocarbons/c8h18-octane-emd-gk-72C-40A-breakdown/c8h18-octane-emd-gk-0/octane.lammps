@@ -69,7 +69,7 @@ compute PE_TOT_DIHEDRAL all pe dihedral
 compute PE_TOT_IMPROPER all pe improper
 compute PE_TOT_ALL all pe
 compute KE_TOT all ke
-fix  PE10 all ave/time 1  10000  10000 c_PE_TOT_PAIR c_PE_TOT_BOND c_PE_TOT_ANGLE c_PE_TOT_DIHEDRAL c_PE_TOT_IMPROPER c_PE_TOT_ALL c_KE_TOT file energy10K.out
+# fix  PE10 all ave/time 1  10000  10000 c_PE_TOT_PAIR c_PE_TOT_BOND c_PE_TOT_ANGLE c_PE_TOT_DIHEDRAL c_PE_TOT_IMPROPER c_PE_TOT_ALL c_KE_TOT file energy10K.out
 
 # per timestep output for calculating angle importance via fluctuations
 # fix  PE1 all ave/time 1  1  1 c_PE_TOT_PAIR c_PE_TOT_BOND c_PE_TOT_ANGLE c_PE_TOT_DIHEDRAL c_PE_TOT_IMPROPER c_PE_TOT_ALL c_KE_TOT file energy1.out
@@ -128,42 +128,72 @@ compute         Jd    all heat/flux KE PE STRESS_d
 compute         Jai   all heat/flux_improved_atom angle
 compute         Jadi   all heat/flux_improved_atom angle dihedral
 
-variable        J2p equal (c_Jp[1]+c_Jb[1]-c_Jp[4]+c_Jp[2]+c_Jb[2]-c_Jp[5]+c_Jp[3]+c_Jb[3]-c_Jp[6])
+variable        J2x equal (c_Jp[1]+c_Jb[1]-c_Jp[4])/vol
+variable        J2y equal (c_Jp[2]+c_Jb[2]-c_Jp[5])/vol
+variable        J2z equal (c_Jp[3]+c_Jb[3]-c_Jp[6])/vol
 
-variable        J2  equal (v_J2p)/(3*vol)
-variable        J3  equal (v_J2p+c_Ja[1]-c_Jp[4]+c_Ja[2]-c_Jp[5]+c_Ja[3]-c_Jp[6])/(3*vol)
-variable        J4  equal (v_J2p+c_Ja[1]+c_Jd[1]-2*c_Jp[4]+c_Ja[2]+c_Jd[2]-2*c_Jp[5]+c_Ja[3]+c_Jd[3]-2*c_Jp[6])/(3*vol)
+variable        J3x equal (c_Jp[1]+c_Jb[1]+c_Ja[1]-2*c_Jp[4])/vol
+variable        J3y equal (c_Jp[2]+c_Jb[2]+c_Ja[2]-2*c_Jp[5])/vol
+variable        J3z equal (c_Jp[3]+c_Jb[3]+c_Ja[3]-2*c_Jp[6])/vol
 
-variable        J3i equal (v_J2p+c_Jai[1]+c_Jai[2]+c_Jai[3])/(3*vol)
-variable        J4i equal (v_J2p+c_Jadi[1]+c_Jadi[2]+c_Jadi[3])/(3*vol)
+variable        J4x equal (c_Jp[1]+c_Jb[1]+c_Ja[1]+c_Jd[1]-3*c_Jp[4])/vol
+variable        J4y equal (c_Jp[2]+c_Jb[2]+c_Ja[2]+c_Jd[2]-3*c_Jp[5])/vol
+variable        J4z equal (c_Jp[3]+c_Jb[3]+c_Ja[3]+c_Jd[3]-3*c_Jp[6])/vol
+
+variable        J3ix equal (c_Jp[1]+c_Jb[1]+c_Jai[1]-c_Jp[4])/vol
+variable        J3iy equal (c_Jp[2]+c_Jb[2]+c_Jai[2]-c_Jp[5])/vol
+variable        J3iz equal (c_Jp[3]+c_Jb[3]+c_Jai[3]-c_Jp[6])/vol
+
+variable        J4ix equal (c_Jp[1]+c_Jb[1]+c_Jadi[1]-c_Jp[4])/vol
+variable        J4iy equal (c_Jp[2]+c_Jb[2]+c_Jadi[2]-c_Jp[5])/vol
+variable        J4iz equal (c_Jp[3]+c_Jb[3]+c_Jadi[3]-c_Jp[6])/vol
+
 
 variable        p equal 100000     # correlation length
 variable        s equal 5      # sample interval
 variable        d equal $p*$s   # dump interval
 
-fix             JJT2 all ave/correlate $s $p $d &
-                v_J2 type auto file J0Jt2.dat ave running
+fix             JJT2x all ave/correlate $s $p $d &
+                v_J2x type auto file J0Jt2x.dat ave running
+fix             JJT2y all ave/correlate $s $p $d &
+                v_J2y type auto file J0Jt2y.dat ave running
+fix             JJT2z all ave/correlate $s $p $d &
+                v_J2z type auto file J0Jt2z.dat ave running
 
-fix             JJT3 all ave/correlate $s $p $d &
-                v_J3 type auto file J0Jt3.dat ave running
+fix             JJT3x all ave/correlate $s $p $d &
+                v_J3x type auto file J0Jt3x.dat ave running
+fix             JJT3y all ave/correlate $s $p $d &
+                v_J3y type auto file J0Jt3y.dat ave running
+fix             JJT3z all ave/correlate $s $p $d &
+                v_J3z type auto file J0Jt3z.dat ave running
 
-fix             JJT4 all ave/correlate $s $p $d &
-                v_J4 type auto file J0Jt4.dat ave running
+fix             JJT4x all ave/correlate $s $p $d &
+                v_J4x type auto file J0Jt4x.dat ave running
+fix             JJT4y all ave/correlate $s $p $d &
+                v_J4y type auto file J0Jt4y.dat ave running
+fix             JJT4z all ave/correlate $s $p $d &
+                v_J4z type auto file J0Jt4z.dat ave running
 
-fix             JJT3i all ave/correlate $s $p $d &
-                v_J3i type auto file J0Jt3i.dat ave running
+fix             JJT3ix all ave/correlate $s $p $d &
+                v_J3ix type auto file J0Jt3ix.dat ave running
+fix             JJT3iy all ave/correlate $s $p $d &
+                v_J3iy type auto file J0Jt3iy.dat ave running
+fix             JJT3iz all ave/correlate $s $p $d &
+                v_J3iz type auto file J0Jt3iz.dat ave running
 
-fix             JJT4i all ave/correlate $s $p $d &
-                v_J4i type auto file J0Jt4i.dat ave running
-
-fix  J5 all ave/time $s 1 $s v_J2 v_J3 v_J4 v_J3i v_J4i file J_all.out
+fix             JJT4ix all ave/correlate $s $p $d &
+                v_J4ix type auto file J0Jt4ix.dat ave running
+fix             JJT4iy all ave/correlate $s $p $d &
+                v_J4iy type auto file J0Jt4iy.dat ave running
+fix             JJT4iz all ave/correlate $s $p $d &
+                v_J4iz type auto file J0Jt4iz.dat ave running
 
 #################################################################################################
 ### NVE
 
 if "${restartAtStep} > 2" then "jump SELF after_NVE_run"
 print "** NVE RUN ** "
-thermo_style custom step vol temp press density etotal v_J2p
+thermo_style custom step vol temp press density etotal
 thermo         10000
 thermo_modify  flush yes
 restart        1000000 nve-eq.*.restart
