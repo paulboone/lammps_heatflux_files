@@ -128,13 +128,14 @@ compute         Jd    all heat/flux KE PE STRESS_d
 compute         Jai   all heat/flux_improved_atom angle
 compute         Jadi   all heat/flux_improved_atom angle dihedral
 
-variable        J2p equal (c_Jp[1]+c_Jb[1]-c_Jp[4]+c_Jp[2]+c_Jb[2]-c_Jp[5]+c_Jp[3]+c_Jb[3]-*c_Jp[6])
+variable        J2p equal (c_Jp[1]+c_Jb[1]-c_Jp[4]+c_Jp[2]+c_Jb[2]-c_Jp[5]+c_Jp[3]+c_Jb[3]-c_Jp[6])
+
 variable        J2  equal (v_J2p)/(3*vol)
-variable        J3  equal (v_J2p +c_Ja[1]-c_Jp[4]+c_Ja[2]-c_Jp[5]+c_Ja[3]-c_Jp[6])/(3*vol)
+variable        J3  equal (v_J2p+c_Ja[1]-c_Jp[4]+c_Ja[2]-c_Jp[5]+c_Ja[3]-c_Jp[6])/(3*vol)
 variable        J4  equal (v_J2p+c_Ja[1]+c_Jd[1]-2*c_Jp[4]+c_Ja[2]+c_Jd[2]-2*c_Jp[5]+c_Ja[3]+c_Jd[3]-2*c_Jp[6])/(3*vol)
 
-variable        J3i equal (v_J2p+c_Jai[1]+c_Jai[2]+c_Jai[3])/ (3*vol)
-variable        J4i equal (v_J2p+c_Jadi[1]+c_Jadi[2]+c_Jadi[3])/ (3*vol)
+variable        J3i equal (v_J2p+c_Jai[1]+c_Jai[2]+c_Jai[3])/(3*vol)
+variable        J4i equal (v_J2p+c_Jadi[1]+c_Jadi[2]+c_Jadi[3])/(3*vol)
 
 variable        p equal 100000     # correlation length
 variable        s equal 5      # sample interval
@@ -162,7 +163,7 @@ fix  J5 all ave/time $s 1 $s v_J2 v_J3 v_J4 v_J3i v_J4i file J_all.out
 
 if "${restartAtStep} > 2" then "jump SELF after_NVE_run"
 print "** NVE RUN ** "
-thermo_style custom step vol temp press density etotal
+thermo_style custom step vol temp press density etotal v_J2p
 thermo         10000
 thermo_modify  flush yes
 restart        1000000 nve-eq.*.restart
