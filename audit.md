@@ -174,3 +174,26 @@ done
 ```
 
 then run thermal_conductivity_via_acf.py
+
+## Octane NEMD at 345K for thermal conductivity
+
+```bash
+lmp_chunks_to_tsv.py  ./output/temps10_10K.out | tsv_plot_chunks.py -o temps.png -r 1000 -1 --yl "Temp [K]" --xl "Z [A]" --avg-every 50 --yr 300 400 --xr 0 40 --plot-every 70 -v 0 2 '#c7d9e8' -v 4 16 0.90 -v 18 22 '#f6d5ac' -v 24 36 0.9 -v 38 40 '#c7d9e8' --chunksize 4.30675 --fit 17.2 68.9 --fit 103.4 155.0 && open temps.png
+```
+
+```bash
+ lmp_avgs_to_tsv.py ./output/J1_10K.out | awk 'BEGIN {OFS = "\t"}; {print $1, $2-$11, $3-$12-($2-$11), $4-$13-($2-$11), $5-$14-($2-$11), $6-$15-($2-$11), $7-$16-($2-$11), $8-$17, $9-$18, $10-$19, $3+$4+$5+$6+$7-4*$2-($12+$13+$14+$15+$16-4*$11), $3+$4+$8+$9+$10-$2-($12+$13+$17+$18+$19-$11);}' | tsv_eq_trends.py -c 1 "CV_KEPE" -c 2 "CV_p" -c 3 "CV_b" -c 4 "CV_a" -c 5 "CV_d" -c 6 "CV_i" -c 7 "CV_ai" -c 8 "CV_di" -c 9 "CV_ii" -c 10 "CV_orig" -c 11 "CV_corr" -n 500 -s 800 | less -S
+```
+
+
+## Octane NEMD at 345K for thermal conductivity–small gradient
+
+```bash
+lmp_chunks_to_tsv.py ./output-45M/temps10_10K.out ./output-90M/temps10_10K.out | tsv_plot_chunks.py -o temps.png -r 1000 -1 --yl "Temp [K]" --xl "Z [A]" --avg-every 100 --yr 325 365 --xr 0 40 --plot-every 80 -v 0 2 '#c7d9e8' -v 4 16 0.90 -v 18 22 '#f6d5ac' -v 24 36 0.9 -v 38 40 '#c7d9e8' --chunksize 4.30675 --fit 17.2 68.9 --fit 103.4 155.0 && open temps.png
+```
+
+## Octane NEMD at 345K for thermal conductivity–small-100 gradient
+
+```bash
+lmp_chunks_to_tsv.py ./output/temps10_10K.out | tsv_plot_chunks.py -o temps.png -r 1000 -1 --yl "Temp [K]" --xl "Z [A]" --avg-every 100 --yr 340 345 --xr 0 40 --plot-every 70 -v 0 2 '#c7d9e8' -v 4 16 0.90 -v 18 22 '#f6d5ac' -v 24 36 0.9 -v 38 40 '#c7d9e8' --chunksize 4.30675 --fit 17.2 68.9 --fit 103.4 155.0 && open temps.png
+```
