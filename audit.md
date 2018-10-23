@@ -142,8 +142,8 @@ to get pressure for gk analysis:
 ```bash
 for dir in `ls ./`; do
   echo "$dir"
-  lmp_log_to_tsv.py $dir/output/log.lammps | tsv_stats.py -r 209 510 -c 1 timestep -c 3 temp -c 4 pressure -c 5 density
-done
+  lmp_log_to_tsv.py $dir/output/log.lammps | tsv_stats.py -r 212 1712 -c 1 timestep -c 3 temp -c 4 pressure -c 5 density
+done | grep 8555000
 ```
 
 to create input files for thermal_conductivity_via_acf.py script (the tail just eliminates the header)
@@ -153,25 +153,24 @@ from the file):
 mkdir -p acf_outputs
 mkdir -p acf_outputs/original
 
-for filename in `ls */output/J0Jt_*.dat`; do
+for filename in `ls c8h18-octane-emd-gk-*/output/J0Jt_*.dat`; do
   echo "$filename => ${filename//\//-}"
-  tail -n 20000 $filename > ./acf_outputs/original/${filename//\//-}
+  tail -n 100000 $filename > ./acf_outputs-17/original/${filename//\//-}
 done
 
 mkdir -p acf_outputs/corrected
-for filename in `ls */output/J0Jti_*.dat`; do
+for filename in `ls c8h18-octane-emd-gk-*/output/J0Jti_*.dat`; do
   echo "$filename => ${filename//\//-}"
-  tail -n 20000 $filename > ./acf_outputs/corrected/${filename//\//-}
+  tail -n 100000 $filename > ./acf_outputs-17/corrected/${filename//\//-}
 done
 ```
 to verify that the top and bottom are both chosen correctly
 ```bash
 for filename in `ls */output/J0Jt_*.dat`; do
   echo "$filename => ${filename//\//-}"
-  tail -n 20000 $filename | head -n 3
-  tail -n 20000 $filename | tail -n 3
+  tail -n 100000 $filename | head -n 3
+  tail -n 100000 $filename | tail -n 3
 done
 ```
-
 
 then run thermal_conductivity_via_acf.py
