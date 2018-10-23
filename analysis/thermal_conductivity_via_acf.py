@@ -58,8 +58,9 @@ experimental_k = 187.47
 
 ## 40 angstrom box 5t
 volume = 40.00 ** 3
-temp = 347.25 # K
-experimental_k = 187.90
+temp = 345.28 # K
+nemd_k = 167.0
+experimental_k = 187.40
 
 orig_acfs = all_acfs(original_acfs, 100000)
 corr_acfs = all_acfs(corrected_acfs, 100000)
@@ -165,6 +166,7 @@ for plot_index in range(len(plot_points)):
         ax.plot(indices[:-1], int_one_traj, zorder=1, color="#AFC2FA", lw=0.5, label=label)
 
     ax.axhline(experimental_k / 1000, linestyle='dashed', linewidth=1, label="Experimental", color="black")
+    ax.axhline(nemd_k / 1000, linestyle='dashed', linewidth=1, label="NEMD", color="0.4")
     ax.legend(fontsize=fsl)
 
 save_figure_as_tiff(fig, "figures/acf_thermal_conductivity_two_ranges.tif", dpi=300)
