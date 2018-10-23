@@ -43,6 +43,7 @@ def average_acfs(acfpath, acf_size):
     return total_acf / len(acf_files)
 
 base_dir = "/Users/pboone/Dropbox (Personal)/Projects/LAMMPS Heat Flux Fix/LAMMPS run files/h1-hydrocarbons/c8h18-octane-emd-gk-72C/"
+base_dir = "/Users/pboone/Dropbox (Personal)/Projects/LAMMPS Heat Flux Fix/LAMMPS run files/h1-hydrocarbons/c8h18-octane-emd-gk-72C-40A-5t/"
 original_acfs = base_dir + "/acf_outputs/original/*.dat"
 corrected_acfs = base_dir + "/acf_outputs/corrected/*.dat"
 
@@ -52,9 +53,9 @@ corrected_acfs = base_dir + "/acf_outputs/corrected/*.dat"
 # experimental_k = 185.46
 
 ## 40 angstrom box
-volume = 40.00 ** 3
-temp = 345.17 # K
-experimental_k = 187.47
+# volume = 40.00 ** 3
+# temp = 345.17 # K
+# experimental_k = 187.47
 
 ## 40 angstrom box 5t
 volume = 40.00 ** 3
@@ -88,38 +89,44 @@ plot_points = [1400, datao.shape[0]] # 7ps, all data
 
 
 ##### print ACF plots
+### plot (1)
 fig = plt.figure(figsize=(7,7))
 ax = fig.add_subplot(1, 1, 1)
 ax.set_xlabel('t [ps]')
 ax.set_ylabel('ACF')
 ax.grid(linestyle='-', color='0.7', zorder=0)
 
-ax.set_xlim(0,2)
+ax.set_xlim(0, 2)
+# ax.set_ylim(-0.05, 0.05)
 
 normalized_acfso = avg_acfso / avg_acfso[0]
 normalized_acfsi = avg_acfsi / avg_acfsi[0]
 
-ax.plot(all_indices, normalized_acfso, zorder=0, color="#FFBC75", lw=2, label="Original")
-ax.plot(all_indices, normalized_acfsi, zorder=1, color="#AFC2FA", lw=2, label="Corrected")
+ax.plot(all_indices * sample_fs, normalized_acfso, zorder=0, color="#FFBC75", lw=0.5, label="Original")
+ax.plot(all_indices * sample_fs, normalized_acfsi, zorder=1, color="#AFC2FA", lw=0.5, label="Corrected")
 
 save_figure_as_tiff(fig, "figures/acf_plot_0-2.tif", dpi=300)
 
+### plot (2)
 fig = plt.figure(figsize=(7,7))
 ax = fig.add_subplot(1, 1, 1)
 ax.set_xlabel('t [ps]')
 ax.set_ylabel('ACF')
 ax.grid(linestyle='-', color='0.7', zorder=0)
+ax.set_xlim(0,500)
+# ax.set_ylim(-0.05, 0.05)
 
+np.average(avg_acfso[0:1000])
 normalized_acfso = np.average(avg_acfso.reshape((100,1000)), axis=-1)
-normalized_acfso /= normalized_acfso[0]
+normalized_acfso /= avg_acfso[0]
 
 normalized_acfsi = np.average(avg_acfsi.reshape((100,1000)), axis=-1)
-normalized_acfsi /= normalized_acfsi[0]
+normalized_acfsi /= avg_acfso[0]
 
 normalized_indices = np.average(all_indices.reshape((100,1000)), axis=-1) * sample_fs
 
-ax.plot(normalized_indices, normalized_acfso, zorder=0, color="#FFBC75", lw=2, label="Original")
-ax.plot(normalized_indices, normalized_acfsi, zorder=1, color="#AFC2FA", lw=2, label="Corrected")
+ax.plot(normalized_indices, normalized_acfso, zorder=0, color="#FFBC75", lw=0.5, label="Original")
+ax.plot(normalized_indices, normalized_acfsi, zorder=1, color="#AFC2FA", lw=0.5, label="Corrected")
 
 save_figure_as_tiff(fig, "figures/acf_plot_0-end.tif", dpi=300)
 
